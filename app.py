@@ -94,9 +94,9 @@ def logout():
 def home():
     user = session['username']
     cursor = conn.cursor()
-    # query = '''SELECT photoPoster, firstName, lastName, filepath, postingDate, caption FROM 
-    # Photo NATURAL JOIN Person WHERE photoPoster = %s ORDER BY postingDate DESC '''
-    query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
+    query = '''SELECT photoID ,photoPoster, firstName, lastName, filepath, postingDate, caption FROM 
+    Photo JOIN Person ON Person.username = Photo.photoPoster WHERE photoPoster = %s ORDER BY postingDate DESC '''
+    # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (user))
     data = cursor.fetchall()
     cursor.close()
@@ -105,6 +105,17 @@ def home():
 @app.route('/post_page')
 def postPage():
     return render_template('post_page.html')
+
+@app.route('/follow', methods=['GET', 'POST'])
+def follow():
+    user = session['username']
+    followee = request.form["username"]
+    cursor = conn.cursor()
+    ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
+    cursor.execute(ins, (followee,user, 0))
+    conn.commit()
+    cursor.close()
+    return render_template('home.html')
 
 @app.route('/post_photo', methods=['GET', 'POST'])
 def postPhoto():

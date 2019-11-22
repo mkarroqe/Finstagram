@@ -23,6 +23,9 @@ Change to styled div
 	<th>postID</th>
     <th>Username</th>
     <th>Photo</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Time Posted</th>
 
 
 {% for line in photos %}
@@ -30,9 +33,20 @@ Change to styled div
 		<td>{{line.photoID}}</td>
         <td>{{line.photoPoster}}</td>
         <td><img src ={{line.filepath}}></td>
+        <td>{{line.firstName}}</td>
+        <td>{{line.lastName}}</td>
+        <td>{{line.postingDate}}</td>
 	</tr>
 {% endfor %}
 </table>
+
+<form action="/follow" method="POST">
+	<input type="text" name = "username" placeholder="username" required/> </br>
+	<input type="submit" value = Follow />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
 
 <a href="/logout">Logout</a>
 
