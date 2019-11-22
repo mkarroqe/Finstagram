@@ -1,0 +1,42 @@
+<html>
+<head>
+</head>
+<body>
+<form action="/post" method="POST">
+	<h1>Welcome {{username}}</h1> 
+	<a href ="/post_page">Post a photo</a>
+</form>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+    img{
+        width: 100px;
+    }
+</style>
+
+Here are your posts:
+
+Change to styled div
+<table>
+	<th>postID</th>
+    <th>Username</th>
+    <th>Photo</th>
+
+
+{% for line in photos %}
+	<tr>
+		<td>{{line.photoID}}</td>
+        <td>{{line.photoPoster}}</td>
+        <td><img src ={{line.filepath}}></td>
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>
