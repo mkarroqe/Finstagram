@@ -26,6 +26,7 @@ Change to styled div
     <th>First Name</th>
     <th>Last Name</th>
     <th>Time Posted</th>
+    <th>More Data</th>
 
 
 {% for line in photos %}
@@ -36,6 +37,13 @@ Change to styled div
         <td>{{line.firstName}}</td>
         <td>{{line.lastName}}</td>
         <td>{{line.postingDate}}</td>
+        <td><form action="/full_photo_info" method="POST">
+            <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+            <input type="submit" value = "More Info" />
+            {% if error %}
+                <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
+        </form></td>
 	</tr>
 {% endfor %}
 </table>

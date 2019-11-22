@@ -102,6 +102,24 @@ def home():
     cursor.close()
     return render_template('home.html', username=user, photos=data)
 
+@app.route('/full_photo_info', methods=['GET', 'POST'])
+def fullPhotoInfo():
+    user = session['username']
+    photoID = request.form["photoID"]
+    cursor = conn.cursor()
+    query = '''SELECT photoID ,photoPoster, firstName, lastName, filepath, postingDate, caption FROM 
+    Photo JOIN Person ON Person.username = Photo.photoPoster WHERE photoID=%s'''
+    # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
+    cursor.execute(query, (photoID))
+    data = cursor.fetchall()
+    cursor.close()
+    cursor = conn.cursor()
+    query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
+    cursor.execute(query2, (photoID))
+    likeData = cursor.fetchall()
+    cursor.close()
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
+
 @app.route('/post_page')
 def postPage():
     return render_template('post_page.html')

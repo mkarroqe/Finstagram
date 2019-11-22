@@ -1,0 +1,27 @@
+<html>
+<head>
+</head>
+<body>
+
+    <div>
+        <h1>Photo by {{photo.photoPoster}}</h1>
+        <label>Posted on:</label>
+        <p>{{photo.postingDate}}</p>
+        <img src = {{photo.filepath}}></img>
+        <label>Poster First Name: {{photo.firstName}}</label>
+        <label>Poster Last Name: {{photo.lastName}}</label>
+        {% for like in likes %}
+            <label>{{like.username}}</label>
+            <p>{{like.rating}}</p>
+        {% endfor %}
+    </div>
+
+
+<a href="/follow_requests">Check followers</a>
+<br>
+<a href="/">Back</a>
+
+</body>
+
+
+</html>
