@@ -39,7 +39,8 @@ Change to styled div
 	</tr>
 {% endfor %}
 </table>
-
+<br>
+<h2>Enter a username to follow!</h2>
 <form action="/follow" method="POST">
 	<input type="text" name = "username" placeholder="username" required/> </br>
 	<input type="submit" value = Follow />
@@ -48,6 +49,8 @@ Change to styled div
 	{% endif %}
 </form>
 
+<a href="/follow_requests">Check followers</a>
+<br>
 <a href="/logout">Logout</a>
 
 </body>

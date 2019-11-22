@@ -95,9 +95,9 @@ def home():
     user = session['username']
     cursor = conn.cursor()
     query = '''SELECT photoID ,photoPoster, firstName, lastName, filepath, postingDate, caption FROM 
-    Photo JOIN Person ON Person.username = Photo.photoPoster WHERE photoPoster = %s ORDER BY postingDate DESC '''
+    Photo JOIN Person ON Person.username = Photo.photoPoster WHERE (photoPoster = %s  AND allFollowers = 1) OR photoPoster IN (SELECT username_followed AS photoPoster FROM Follow WHERE username_follower = %s AND followstatus=1) ORDER BY postingDate DESC '''
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
-    cursor.execute(query, (user))
+    cursor.execute(query, (user, user))
     data = cursor.fetchall()
     cursor.close()
     return render_template('home.html', username=user, photos=data)
@@ -115,7 +115,29 @@ def follow():
     cursor.execute(ins, (followee,user, 0))
     conn.commit()
     cursor.close()
-    return render_template('home.html')
+    return redirect(url_for('home'))
+
+@app.route('/follow_accept', methods=['GET', 'POST'])
+def followAccept():
+    user = session['username']
+    follower = request.form["follower"]
+    cursor = conn.cursor()
+    ins = "UPDATE Follow SET followstatus=1 WHERE username_followed = %s AND username_follower = %s"
+    cursor.execute(ins, (user, follower))
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
+@app.route('/follow_requests', methods=['GET', 'POST'])
+def followRequests():
+    user = session['username']
+    cursor = conn.cursor()
+    ins = "SELECT * FROM Follow WHERE username_followed = %s AND followstatus != 1"
+    cursor.execute(ins, (user))
+    data = cursor.fetchall()
+    conn.commit()
+    cursor.close()
+    return render_template("follow_requests.html", requests = data)
 
 @app.route('/post_photo', methods=['GET', 'POST'])
 def postPhoto():

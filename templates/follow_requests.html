@@ -1,0 +1,22 @@
+<html>
+    <head>
+    </head>
+    <body>
+        {% for line in requests %}
+            <form action="/follow_accept" method="POST">
+                <div style="display: flex;">
+                    <p style = "margin: 0;">{{line.username_follower}}</p>
+                    <input type = "hidden" name = "follower" value = {{line.username_follower}}>
+                    <input type="submit" value = Accept style = "margin-left: 5px"/>
+                </div>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
+        {% endfor %}
+    
+
+    <a href="/home">Go back</a>
+
+    </body>
+</html>
