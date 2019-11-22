@@ -1,6 +1,11 @@
-from flask import Flask, render_template,  request, session, url_for, redirect
+from flask import Flask, render_template,  request, session, url_for, redirect, send_file
+import os
+import uuid
+import hashlib
 import pymysql.cursors
 from datetime import datetime
+from functools import wraps
+import time
 
 app = Flask(__name__)
 
@@ -12,10 +17,20 @@ conn = pymysql.connect(host='localhost',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
 
-@app.route('/')
-def hello():
-    print("Hey!")
-    return render_template('index.html')
+
+def login_required(f):
+    @wraps(f)
+    def dec(*args, **kwargs):
+        if not "username" in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return dec
+
+@app.route("/")
+def index():
+    if "username" in session:
+        return redirect(url_for("home"))
+    return render_template("index.html")
 
 #Define route for login
 @app.route('/login')
@@ -30,67 +45,57 @@ def register():
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
-    #grabs information from the forms
-    username = request.form['username']
-    password = request.form['password']
+    if request.form:
+        requestData = request.form
+        username = requestData["username"]
+        plaintextPasword = requestData["password"]
+        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
 
-    #cursor used to send queries
-    cursor = conn.cursor()
-    #executes query
-    query = 'SELECT * FROM Person WHERE username = %s and password = %s'
-    cursor.execute(query, (username, password))
-    #stores the results in a variable
-    data = cursor.fetchone()
-    #use fetchall() if you are expecting more than 1 data row
-    cursor.close()
-    error = None
-    if(data):
-        #creates a session for the the user
-        #session is a built in
-        session['username'] = username
-        return redirect(url_for('home'))
-    else:
-        #returns an error message to the html page
-        error = 'Invalid login or username'
-        return render_template('login.html', error=error)
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM person WHERE username = %s AND password = %s"
+            cursor.execute(query, (username, hashedPassword))
+        data = cursor.fetchone()
+        if data:
+            session["username"] = username
+            return redirect(url_for("home"))
+
+        error = "Incorrect username or password."
+        return render_template("login.html", error=error)
+
+    error = "An unknown error has occurred. Please try again."
+    return render_template("login.html", error=error)
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
-    #grabs information from the forms
-    username = request.form['username']
-    password = request.form['password']
-    firstname = request.form['firstname']
-    lastname = request.form['lastname']
-    bio = request.form['bio']
+    if request.form:
+        requestData = request.form
+        username = requestData["username"]
+        plaintextPasword = requestData["password"]
+        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+        firstName = requestData["firstName"]
+        lastName = requestData["lastName"]
+        
+        try:
+            with conn.cursor() as cursor:
+                query = "INSERT INTO person (username, password, firstName, lastName) VALUES (%s, %s, %s, %s)"
+                cursor.execute(query, (username, hashedPassword, firstName, lastName))
+        except pymysql.err.IntegrityError:
+            error = "%s is already taken." % (username)
+            return render_template('register.html', error=error)    
 
-    #cursor used to send queries
-    cursor = conn.cursor()
-    #executes query
-    query = 'SELECT * FROM Person WHERE username = %s'
-    cursor.execute(query, (username))
-    #stores the results in a variable
-    data = cursor.fetchone()
-    #use fetchall() if you are expecting more than 1 data row
-    error = None
-    if(data):
-        #If the previous query returns data, then user exists
-        error = "This user already exists"
-        cursor.close()
-        return render_template('register.html', error = error)
-    else:
-        ins = 'INSERT INTO Person VALUES(%s, %s, %s, %s, %s)'
-        cursor.execute(ins, (username, password, firstname, lastname, bio))
-        conn.commit()
-        cursor.close()
-        return render_template('index.html')
+        return redirect(url_for("login"))
 
-@app.route('/logout')
+    error = "An error has occurred. Please try again."
+    return render_template("register.html", error=error)
+
+@app.route("/logout", methods=["GET"])
 def logout():
-    session.pop('username')
-    return redirect('/')
+    session.pop("username")
+    return redirect("/")
 
 @app.route('/home')
+@login_required
 def home():
     user = session['username']
     cursor = conn.cursor()
@@ -103,6 +108,7 @@ def home():
     return render_template('home.html', username=user, photos=data)
 
 @app.route('/full_photo_info', methods=['GET', 'POST'])
+@login_required
 def fullPhotoInfo():
     user = session['username']
     photoID = request.form["photoID"]
@@ -121,10 +127,12 @@ def fullPhotoInfo():
     return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
 
 @app.route('/post_page')
+@login_required
 def postPage():
     return render_template('post_page.html')
 
 @app.route('/follow', methods=['GET', 'POST'])
+@login_required
 def follow():
     user = session['username']
     followee = request.form["username"]
@@ -136,6 +144,7 @@ def follow():
     return redirect(url_for('home'))
 
 @app.route('/follow_accept', methods=['GET', 'POST'])
+@login_required
 def followAccept():
     user = session['username']
     follower = request.form["follower"]
@@ -147,6 +156,7 @@ def followAccept():
     return redirect(url_for('home'))
 
 @app.route('/follow_requests', methods=['GET', 'POST'])
+@login_required
 def followRequests():
     user = session['username']
     cursor = conn.cursor()
@@ -158,6 +168,7 @@ def followRequests():
     return render_template("follow_requests.html", requests = data)
 
 @app.route('/post_photo', methods=['GET', 'POST'])
+@login_required
 def postPhoto():
     user = session['username']
     filepath = request.form["filepath"]
@@ -173,7 +184,7 @@ def postPhoto():
     cursor.execute(ins, (datetime.now().isoformat(),filepath, allFollowers, caption, user))
     conn.commit()
     cursor.close()
-    return render_template('home.html', username=user)
+    return redirect(url_for('home'))
 
 
 
