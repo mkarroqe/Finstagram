@@ -10,9 +10,9 @@ import time
 app = Flask(__name__)
 
 conn = pymysql.connect(host='localhost',
-                       port = 20001,
+                       port = 3306,
                        user='root',
-                       password='root',
+                       password='%0Q4xK^pBV88B!5%n83nGKCo$2rK9QIATTUmqpB0X24IfX!e#H',
                        db='finstagram',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
