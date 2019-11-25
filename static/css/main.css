@@ -1,0 +1,37 @@
+body {
+	background-color: #F2FDFF;
+}
+
+a:hover .btn-info {
+	text-decoration: none;
+}
+.btn-info {
+	background-color: #98E2F9;
+	border-color: #98E2FC;
+}
+
+/* general */
+.center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	/*width: 50%;*/
+}
+.small {
+	width: 30%;
+}
+
+/* index.html */
+#start_btns {
+	line-height: 10px;
+}
+#start_btns a {
+	text-decoration: none;
+}
+#start_btns button {
+	padding: 25px;
+	font-size: 30px;
+}
+.btn-block {
+	width: 50%;
+}
