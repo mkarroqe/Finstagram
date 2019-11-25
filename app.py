@@ -117,13 +117,16 @@ def fullPhotoInfo():
     Photo JOIN Person ON Person.username = Photo.photoPoster WHERE photoID=%s'''
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
-    data = cursor.fetchall()
+    data = cursor.fetchone()
     cursor.close()
     cursor = conn.cursor()
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
     cursor.execute(query2, (photoID))
     likeData = cursor.fetchall()
     cursor.close()
+    print(user)
+    print(data)
+    print(likeData)
     return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
 
 @app.route('/post_page')
@@ -140,6 +143,35 @@ def follow():
     ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
     cursor.execute(ins, (followee,user, 0))
     conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
+@app.route('/like', methods=['GET', 'POST'])
+@login_required
+def like():
+    user = session['username']
+    photoID = request.form["photoID"]
+    rating = request.form["rating"]
+    cursor = conn.cursor()
+    ins = ("INSERT INTO Likes VALUES( %s, %s, %s, %s)")
+    cursor.execute(ins, (user,photoID, datetime.now().isoformat(), rating))
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+    
+@app.route('/tag', methods=['GET', 'POST'])
+@login_required
+def tag():
+    user = session['username']
+    tagged = request.form["tagged"]
+    photoID = request.form["photoID"]
+    taggedUsers = tagged.split(",")
+    cursor = conn.cursor()
+    ins = ("INSERT INTO Tagged VALUES( %s, %s, %s)")
+    for user in taggedUsers:  
+        sanatizedUser = user.replace(" ","")
+        cursor.execute(ins, (sanatizedUser,photoID, 0))
+        conn.commit()
     cursor.close()
     return redirect(url_for('home'))
 
@@ -173,15 +205,15 @@ def postPhoto():
     user = session['username']
     filepath = request.form["filepath"]
     caption = request.form["caption"]
+    time = datetime.now().isoformat()
     if "allFollowers" in request.form:
         allFollowers = 1
     else:
         allFollowers = 0
     print("All Followers val: "+ str(allFollowers))
-
     cursor = conn.cursor()
     ins = "INSERT INTO Photo (postingDate, filepath, allFollowers, caption, photoPoster) VALUES( %s, %s, %s, %s, %s)"
-    cursor.execute(ins, (datetime.now().isoformat(),filepath, allFollowers, caption, user))
+    cursor.execute(ins, (time,filepath, allFollowers, caption, user))
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
