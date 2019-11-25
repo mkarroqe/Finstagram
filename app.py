@@ -214,9 +214,10 @@ def followRequests():
 @app.route('/tag_requests', methods=['GET', 'POST'])
 @login_required
 def tagRequests():
+    # NOT FINISHED
     user = session['username']
     cursor = conn.cursor()
-    ins = "SELECT * FROM Tagged WHERE username = %s AND followstatus != 1"
+    ins = "SELECT username, photoID, photoPoster, filepath FROM Tagged WHERE username = %s AND tagstatus != 1 JOIN Photo ON Photo.photoID = Tagged.photoID"
     cursor.execute(ins, (user))
     data = cursor.fetchall()
     conn.commit()
