@@ -1,22 +1,62 @@
 <html>
 <head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Our styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
-<form action="/post" method="POST">
-	<h1>Welcome {{username}}</h1> 
-	<a href ="/post_page">Post a photo</a>
-</form>
 
-<style type="text/css">
+    <div class="container">
+        <img class="small" src="../static/css/imgs/logo.png" />
+    </div>
+    <div class="jumbotron jumbotron-fluid" id="homepage">
+      <div class="container">
+        <form action="/post" method="POST">
+            <h1>Welcome, back {{username}}!</h1> 
+        </form>
+        <a href ="/post_page"><button type="button" class="btn btn-lg btn-blue">Post a Photo</button></a>
+        <a href="/follow_requests"><button type="button" class="btn btn-lg btn-green">Check followers</button></a>
+      </div>
+    </div>
+
+<!-- <style type="text/css">
 	table, th, td{
 		border: 1px solid black;
 	}
     img{
         width: 100px;
     }
-</style>
+</style> -->
 
-Here are your posts:
+{% for line in photos %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2">
+<!--         {% for line in photos %}
+ -->            <div class="card" style="width: 18rem;">
+              <img src={{line.filepath}} class="card-img-top">
+              <div class="card-body">
+                <h5 class="card-title">{{line.photoPoster}}</h5>
+                <p class="card-text"><small>{{line.postingDate}}</small></p>
+                <p class="card-text">Post {{line.photoID}}, by {{line.firstName}} {{line.lastName}}</p>
+              </div>
+              <form action="/full_photo_info" method="POST">
+                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                <!-- <input type="submit" value = "More Info" /> -->
+                <button type="submit" class="btn btn-blue btn-block center">Full Details &#8599; </button>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+               </form>
+            </div>
+        <!-- {% endfor %} -->
+    </div>
+  </div>
+</div>
+{% endfor %}
 
 Change to styled div
 <table>
@@ -74,9 +114,14 @@ Change to styled div
 	{% endif %}
 </form>
 
-<a href="/follow_requests">Check followers</a>
+
 <br>
 <a href="/logout">Logout</a>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </body>
 
