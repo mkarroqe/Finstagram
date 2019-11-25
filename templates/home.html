@@ -50,6 +50,20 @@
                     <p class="error"><strong>Error:</strong> {{error}}</p>
                 {% endif %}
                </form>
+               <form action="/like" method="POST">
+                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                <select name = "rating">
+                    <option value = 1 >1</option>
+                    <option value = 2>2</option>
+                    <option value = 3>3</option>
+                    <option value = 4>4</option>
+                    <option value = "5" selected> 5</option>
+                </select>
+                <input type="submit" value = "Rate" />
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
             </div>
         {% endfor %}
     </div>
