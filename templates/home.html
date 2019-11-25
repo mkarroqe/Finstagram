@@ -31,12 +31,11 @@
     }
 </style> -->
 
-{% for line in photos %}
 <div class="container">
   <div class="row">
     <div class="col-sm-2">
-<!--         {% for line in photos %}
- -->            <div class="card" style="width: 18rem;">
+        {% for line in photos %}
+            <div class="card" style="width: 18rem;">
               <img src={{line.filepath}} class="card-img-top">
               <div class="card-body">
                 <h5 class="card-title">{{line.photoPoster}}</h5>
@@ -52,11 +51,10 @@
                 {% endif %}
                </form>
             </div>
-        <!-- {% endfor %} -->
+        {% endfor %}
     </div>
   </div>
 </div>
-{% endfor %}
 
 Change to styled div
 <table>
