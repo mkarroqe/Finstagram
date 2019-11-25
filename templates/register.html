@@ -1,20 +1,101 @@
 <html>
     <head>
+        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"> -->
+    
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <!-- Our styling -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     </head>
     <body>
+
+    <div class="container">
+        <!-- TODO: fix url? -->
+        <img class="small" src="../static/css/imgs/logo.png" />
+    </div>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Register</h1>
+        <p class="lead">Finstagram is another social media that is happy to have you for reasons! Let's get to know each other..</p>
+      </div>
+    </div>
+
+    <div class="container">
     <form action="/registerAuth" method="POST">
-        <input type="text" name = "username" placeholder="username" required/> </br>
-        <input type="password" name = "password" placeholder="password" required/></br>
-        <input type="text" name = "firstName" placeholder="First Name" required/></br>
-        <input type="text" name = "lastName" placeholder="Last Name" required/></br>
-        <input type="text" name = "bio" placeholder="Bio" required/></br>
-        <input type="submit" value = Register />
+
+        <!-- <input type="text" name = "firstName" placeholder="First Name" required/></br>
+        <input type="text" name = "lastName" placeholder="Last Name" required/></br> -->
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">First Name</label>
+            <div class="col">
+              <input type="text" class="form-control" name="firstName" placeholder="First Name"required />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col">
+              <input type="text" class="form-control" name="lastName" placeholder="Last Name" required />
+            </div>
+        </div>
+
+        <!-- <input type="text" name = "username" placeholder="username" required/> </br> -->
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Username</label>
+            <div class="col">
+              <div class="input-group mb-2 mr-sm-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">@</div>
+              </div>
+              <input type="text" class="form-control" name="username" placeholder="Username" required />
+            </div>
+        </div>
+        </div>
+
+        <!-- <input type="password" name = "password" placeholder="password" required/></br> -->
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password" required />
+              <small id="passwordHelpBlock" class="form-text text-muted">
+                  Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+              </small>
+            </div>
+        </div>
+
+        <!-- <input type="text" name = "bio" placeholder="Bio" required/></br> -->
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bio</label>
+            <div class="col">
+              <input type="text" class="form-control" name="bio" placeholder="Bio" required />
+              <small id="passwordHelpBlock" class="form-text text-muted">
+                  140 characters or less please, for our attention spans
+              </small>
+            </div>
+        </div>
+        
+        <br/>
+
+        <!-- <input type="submit" value = Register /></button> -->
+        <button type="submit" class="btn btn-primary btn-block center">Submit</button>
+
+
         {% if error %}
             <p class="error"><strong>Error:</strong> {{error}}</p>
         {% endif %}
     </form>
 
-    <a href="/">Go back</a>
+    <a href="/"><button class="btn btn-info btn-block center">&#8617; Go back</button></a>
+
+    </div> <!-- /container -->
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     </body>
 

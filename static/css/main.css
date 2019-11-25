@@ -5,9 +5,36 @@ body {
 a:hover .btn-info {
 	text-decoration: none;
 }
-.btn-info {
+.btn-blue {
 	background-color: #98E2F9;
 	border-color: #98E2FC;
+}
+.btn-blue:hover {
+	background-color: #98C2FC;
+	border-color: #98C2FC;
+}
+
+.btn-green {
+	background-color: #d2ffb1;
+	border-color: #d8ffb1;
+}
+.btn-green:hover {
+	background-color: #0F6B8D;
+	border-color: #0F6B8D;
+}
+
+.btn-purple {
+	background-color: #E5D9F2;
+}
+.btn-purple:hover {
+	background-color: #E5B9F2;
+}
+
+.btn-pink {
+	background-color: #F4DBD8;
+}
+.btn-pink:hover {
+	background-color: #F4BBD8;
 }
 
 /* general */
@@ -35,3 +62,16 @@ a:hover .btn-info {
 .btn-block {
 	width: 50%;
 }
+
+/* home.html */
+#homepage {
+	/*background-color: #F4DBD8;*/
+}
+#homepage h1 {
+
+}
+
+
+
+
+
