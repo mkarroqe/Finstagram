@@ -188,6 +188,18 @@ def followAccept():
     cursor.close()
     return redirect(url_for('home'))
 
+@app.route('/tag_accept', methods=['GET', 'POST'])
+@login_required
+def tagAccept():
+    user = session['username']
+    photoID = request.form["photoID"]
+    cursor = conn.cursor()
+    ins = "UPDATE Tagged SET tagstatus=1 WHERE username= %s AND photoID = %s"
+    cursor.execute(ins, (user, photoID))
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
 @app.route('/follow_requests', methods=['GET', 'POST'])
 @login_required
 def followRequests():
@@ -199,6 +211,19 @@ def followRequests():
     conn.commit()
     cursor.close()
     return render_template("follow_requests.html", requests = data)
+
+@app.route('/tag_requests', methods=['GET', 'POST'])
+@login_required
+def tagRequests():
+    # NOT FINISHED
+    user = session['username']
+    cursor = conn.cursor()
+    ins = "SELECT username, photoID, photoPoster, filepath FROM Tagged WHERE username = %s AND tagstatus != 1 JOIN Photo ON Photo.photoID = Tagged.photoID"
+    cursor.execute(ins, (user))
+    data = cursor.fetchall()
+    conn.commit()
+    cursor.close()
+    return render_template("check_tagged.html", requests = data)
 
 @app.route('/post_photo', methods=['GET', 'POST'])
 @login_required
