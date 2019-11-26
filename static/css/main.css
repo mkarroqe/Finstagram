@@ -5,6 +5,9 @@ body {
 a:hover .btn-info {
 	text-decoration: none;
 }
+.bg-blue {
+	background-color: #98E2F9;
+}
 .btn-blue {
 	background-color: #98E2F9;
 	border-color: #98E2FC;
@@ -30,10 +33,10 @@ a:hover .btn-info {
 	background-color: #E5B9F2;
 }
 
-.btn-pink {
+.btn-pink:hover {
 	background-color: #F4DBD8;
 }
-.btn-pink:hover {
+.btn-pink {
 	background-color: #F4BBD8;
 }
 
@@ -77,7 +80,11 @@ a:hover .btn-info {
 }
 
 #follow_input {
-	width: 70%;
+	/*width: 70%;*/
+}
+
+.card-header {
+	text-align: left;
 }
 
 /* Photo Info */
