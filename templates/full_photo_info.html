@@ -1,5 +1,11 @@
 <html>
 <head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Our styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
 
@@ -14,7 +20,32 @@
         {% for like in likes %}
             <div style = "MARY STYLE THIS">
                 <label>{{like["username"]}}</label>
-                <p>{{like["rating"]}}</p>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="rating-block">
+            <h4>Your rating</h4>
+            <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+
+                <!-- <p>{{like["rating"]}}</p> -->
+
+
             </div>
         {% endfor %}
         {% if photo["photoPoster"] == username %}
@@ -34,6 +65,12 @@
 <a href="/follow_requests">Check followers</a>
 <br>
 <a href="/">Back</a>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 
 </body>
 

@@ -8,11 +8,12 @@ from functools import wraps
 import time
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 conn = pymysql.connect(host='localhost',
-                       port = 3306,
+                       port = 20001,
                        user='root',
-                       password='%0Q4xK^pBV88B!5%n83nGKCo$2rK9QIATTUmqpB0X24IfX!e#H',
+                       password='root',
                        db='finstagram',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)

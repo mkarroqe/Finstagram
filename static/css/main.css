@@ -19,8 +19,8 @@ a:hover .btn-info {
 	border-color: #d8ffb1;
 }
 .btn-green:hover {
-	background-color: #0F6B8D;
-	border-color: #0F6B8D;
+	background-color: #d2efb1;
+	border-color: #d2efb1;
 }
 
 .btn-purple {
@@ -43,6 +43,10 @@ a:hover .btn-info {
 	margin-left: auto;
 	margin-right: auto;
 	/*width: 50%;*/
+}
+.left {
+	bottom:0;
+	left: 0;
 }
 .small {
 	width: 30%;
@@ -67,9 +71,36 @@ a:hover .btn-info {
 #homepage {
 	/*background-color: #F4DBD8;*/
 }
-#homepage h1 {
 
+#formControlRange {
+	/*width: 50%;*/
 }
+
+#follow_input {
+	width: 70%;
+}
+
+/* Photo Info */
+.rating-block{
+	background-color:#FAFAFA;
+	border:1px solid #EFEFEF;
+	padding:15px 15px 20px 15px;
+	border-radius:3px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

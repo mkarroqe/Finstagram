@@ -8,127 +8,111 @@
     <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
-
     <div class="container">
-        <img class="small" src="../static/css/imgs/logo.png" />
+        <div class="row">
+            <div class="col-lg-12">
+                <img class="small" src="../static/css/imgs/logo.png" />
+            </div>
+        </div>
     </div>
+
     <div class="jumbotron jumbotron-fluid" id="homepage">
       <div class="container">
         <form action="/post" method="POST">
             <h1>Welcome, back {{username}}!</h1> 
         </form>
-        <a href ="/post_page"><button type="button" class="btn btn-lg btn-blue">Post a Photo</button></a>
-        <a href="/follow_requests"><button type="button" class="btn btn-lg btn-green">Check followers</button></a>
+
+        <div class="row">
+            <div class="col-lg-5">
+                <a href ="/post_page"><button type="button" class="btn btn-lg btn-blue">Post a Photo</button></a>
+
+                <a href="/follow_requests"><button type="button" class="btn btn-lg btn-green">Check followers</button></a>
+            </div>
+            <div class="col-lg-7">
+                <form action="/follow" method="POST">
+                    <div class="col">
+                      <div class="input-group mb-2 mr-sm-2">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text">@</div>
+                          </div>
+                          <input id="follow_input" type="text" name = "username" placeholder=" Enter a username to follow!" required/>
+
+                          <button type="submit" class="btn btn-lg btn-purple">Follow</button>
+                          {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                          {% endif %}
+                      </div>
+                    </div>
+                </form>
+            </div>
       </div>
     </div>
-
-<!-- <style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-    img{
-        width: 100px;
-    }
-</style> -->
+</div>
 
 <div class="container">
   <div class="row">
-    <div class="col-sm-2">
-        {% for line in photos %}
-            <div class="card" style="width: 18rem;">
-              <img src={{line.filepath}} class="card-img-top">
-              <div class="card-body">
+    {% for line in photos %}
+    <div class="col-lg-4">
+        <div class="card" style="height: 28rem; ">
+            <img style="width:21.75rem" src={{line.filepath}} class="card-img-top">
+            <div class="card-body">
                 <h5 class="card-title">{{line.photoPoster}}</h5>
                 <p class="card-text"><small>{{line.postingDate}}</small></p>
-                <p class="card-text">Post {{line.photoID}}, by {{line.firstName}} {{line.lastName}}</p>
-              </div>
-              <form action="/full_photo_info" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <!-- <input type="submit" value = "More Info" /> -->
-                <button type="submit" class="btn btn-blue btn-block center">Full Details &#8599; </button>
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-               </form>
-               <form action="/like" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <select name = "rating">
-                    <option value = 1 >1</option>
-                    <option value = 2>2</option>
-                    <option value = 3>3</option>
-                    <option value = 4>4</option>
-                    <option value = "5" selected> 5</option>
-                </select>
-                <input type="submit" value = "Rate" />
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-            </form>
-            </div>
-        {% endfor %}
-    </div>
-  </div>
+
+                <p class="card-text"> {{line.caption}}</p>
+                
+                <div class="col-lg-12"> 
+                    <button type="button" class="btn btn-purple" data-toggle="modal" data-target="#ratepop">Rate &#9733;</button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="ratepop" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5>Rate the photo by sliding the bar</h5>
+                              <!-- <span aria-hidden="true">&times;</span> -->
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="/like" method="POST">
+                                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                                <div class="form-group">
+                                    <label>How much like?</label>
+                                    <input type="range" class="form-control-range" id="formControlRange" min=1, max=5 name="rating">
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit Rating</button>
+                                {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                                {% endif %}
+                            </form> <!-- /like -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <form action="/full_photo_info" method="POST">
+                        <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
+
+                        <button type="submit" class="btn btn-blue">Full Details &#8599; </button>
+                        {% if error %}
+                            <p class="error"><strong>Error:</strong> {{error}}</p>
+                        {% endif %}
+                   </form> <!-- full photo info -->
+                </div>
+            </div> <!-- /card body -->
+        </div>
+    </div>{% endfor %}
 </div>
-
-<!-- Change to styled div
-<table>
-	<th>postID</th>
-    <th>Username</th>
-    <th>Photo</th>
-    <th>First Name</th>
-    <th>Last Name</th>
-    <th>Time Posted</th>
-    <th>More Data</th>
-    <th>Like</th>
-
-
-{% for line in photos %}
-	<tr>
-		<td>{{line.photoID}}</td>
-        <td>{{line.photoPoster}}</td>
-        <td><img src ={{line.filepath}}></td>
-        <td>{{line.firstName}}</td>
-        <td>{{line.lastName}}</td>
-        <td>{{line.postingDate}}</td>
-        <td><form action="/full_photo_info" method="POST">
-            <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-            <input type="submit" value = "More Info" />
-            {% if error %}
-                <p class="error"><strong>Error:</strong> {{error}}</p>
-            {% endif %}
-        </form></td>
-        <td>
-            <form action="/like" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <select name = "rating">
-                    <option value = 1 >1</option>
-                    <option value = 2>2</option>
-                    <option value = 3>3</option>
-                    <option value = 4>4</option>
-                    <option value = "5" selected> 5</option>
-                </select>
-                <input type="submit" value = "Rate" />
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-            </form>
-        </td>
-	</tr>
-{% endfor %}
-</table> -->
-<br>
-<h2>Enter a username to follow!</h2>
-<form action="/follow" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="submit" value = Follow />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
-
+</div></body>
 
 <br>
 <a href="/logout">Logout</a>
+    <script>
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
+    </script>
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
