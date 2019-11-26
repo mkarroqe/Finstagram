@@ -6,7 +6,7 @@ Two pieces: MAMP, and Flask.
 ### Flask
 1. Enter the virtual environment by running `source /venv/bin/activate` in the terminal.
 2. `export FLASK_ENV=development`
-3. `export FLASK_ENV=app.py`
+3. `export FLASK_APP=app.py`
 4. `python -m flask run`
 You should see the following success message:
 ```bash
