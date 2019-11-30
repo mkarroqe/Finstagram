@@ -8,8 +8,7 @@
     <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
-
-    <nav class="navbar fixed-top navbar-dark bg-blue">
+    <nav class="navbar fixed-top navbar-dark bg-blue navbar-expand-lg">
       <a href="/home" class="navbar-brand">
         <img src="../static/css/imgs/favicon.png" height="50" class="d-inline-block align-top" alt="">
       </a>
@@ -17,8 +16,11 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/post_page">Home</a>
+          </li>  
           <li class="nav-item">
             <a class="nav-link" href="/post_page">Post a Pic</a>
           </li>
@@ -26,24 +28,24 @@
             <a class="nav-link" href="/follow_requests">Check Followers</a>
           </li>
           <li class="nav-item">
-            <a href="/logout">Logout</a>
+            <a class="nav-link" href="/logout">Logout</a>
           </li>
         </ul>
-      </div>
 
-      <form action="/follow" method="POST" class="form-inline" >
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text">@</div>
+        <form action="/follow" method="POST" class="form-inline" >
+            <div class="input-group navfollow">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                </div>
+                <input class="form-control mr-sm-2" type="search" name = "username" placeholder="Enter a username" aria-label="Search" required/>
+
+                <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Follow</button>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
             </div>
-            <input class="form-control mr-sm-2" type="search" name = "username" placeholder="Enter a username" aria-label="Search" required/>
-
-            <button type="submit" class="btn btn-green my-2 my-sm-0">Follow</button>
-            {% if error %}
-                <p class="error"><strong>Error:</strong> {{error}}</p>
-            {% endif %}
-        </div>
-      </form>
+        </form>
+      </div>
     </nav>
 
     <div class="jumbotron jumbotron-fluid" id="homepage">
@@ -53,30 +55,6 @@
             <h1>Welcome, back {{username}}!</h1> 
             <p>Here's the latest from your followers.</p>
         </form>
-
-        <!-- <div class="row">
-            <div class="col-lg-5">
-                <a href ="/post_page"><button type="button" class="btn btn-lg btn-blue">Post a Photo</button></a>
-
-                <a href="/follow_requests"><button type="button" class="btn btn-lg btn-green">Check followers</button></a>
-            </div>
-            <div class="col-lg-7">
-                <form action="/follow" method="POST">
-                    <div class="col">
-                      <div class="input-group mb-2 mr-sm-2">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">@</div>
-                          </div>
-                          <input id="follow_input" type="text" name = "username" placeholder=" Enter a username to follow!" required/>
-
-                          <button type="submit" class="btn btn-lg btn-purple">Follow</button>
-                          {% if error %}
-                                <p class="error"><strong>Error:</strong> {{error}}</p>
-                          {% endif %}
-                      </div>
-                    </div>
-                </form>
-            </div> -->
       </div>
     </div>
 </div>
