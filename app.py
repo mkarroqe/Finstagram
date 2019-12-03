@@ -229,7 +229,10 @@ def tagRequests():
 @login_required
 def postPhoto():
     user = session['username']
-    filepath = request.form["filepath"]
+
+    ROOT = "static/css/imgs/posts/"
+    filepath = ROOT + request.form["filepath"]
+
     caption = request.form["caption"]
     time = datetime.now().isoformat()
     if "allFollowers" in request.form:
@@ -243,8 +246,6 @@ def postPhoto():
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
-
-
 
 app.secret_key = '57902857h20398572h034fj059jf832457h24'
 #Run the app on localhost port 5000
