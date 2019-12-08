@@ -8,6 +8,7 @@
     <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
+<<<<<<< HEAD
 
     <div class="container">
         <img class="small" src="../static/css/imgs/logo.png" />
@@ -132,9 +133,167 @@
 	<input type="submit" value = "My Friend Groups" />
 </form>
 
+=======
+    <!-- ------------------ NAVIGATION ------------------ -->
+    <nav class="navbar fixed-top navbar-dark bg-blue navbar-expand-lg">
+      <a href="/home" class="navbar-brand">
+        <img src="../static/css/imgs/favicon.png" height="50" class="d-inline-block align-top" alt="">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/home">Home</a>
+          </li>  
+          <li class="nav-item">
+            <a class="nav-link" href="/post_page">Post a Pic</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/follow_requests">Check Followers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        </ul>
+
+        <form action="/follow" method="POST" class="form-inline" >
+            <div class="input-group navfollow">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                </div>
+                <input class="form-control mr-sm-2" type="search" name = "username" placeholder="Enter a username" aria-label="Search" required/>
+
+                <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Follow</button>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </div>
+        </form>
+      </div>
+    </nav>
+
+    <!-- ----------------- /NAVIGATION ------------------ -->
+
+    <div class="jumbotron jumbotron-fluid" id="homepage">
+      <div class="container">
+        <form action="/post" method="POST">
+            <br/><br/>
+            <h1>Welcome, back {{username}}!</h1> 
+            <p>Here's the latest from your followers.</p>
+        </form>
+      </div>
+    </div>
+<!-- </div> -->
+
+<div class="container">
+    <div class="row">
+        {% for line in photos %}
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card mb-3 text-center">
+              <img style="height: 200px; object-fit: cover;" class="card-img-top" src={{line.filepath}} /> 
+
+              <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h5>{{line.photoPoster}}</h5>
+                        <form action="/full_photo_info" method="POST">
+                            <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
+
+                            <button type="submit" class="btn btn-pink">Full Details &#8599; </button>
+                            {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                            {% endif %}
+                        </form> <!-- full photo info -->
+                    </div>
+                    <div class="col-lg-6">
+                        <p class="card-text">{{line.caption}}</p>
+                    </div>
+                </div><!-- row -->
+
+              </div>
+              <div class="card-footer text-muted">
+                {{line.postingDate}}
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- <hr />
+
+<div class="container">
+  <div class="row">
+    {% for line in photos %}
+    <div class="col-lg-12">
+        <div class="card" style="height: 28rem;">
+            <img style="width:21.75rem" src={{line.filepath}} class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">{{line.photoPoster}}</h5>
+                <p class="card-text"><small>{{line.postingDate}}</small></p>
+
+                <p class="card-text"> {{line.caption}}</p>
+                
+                <div class="col-lg-12"> 
+                    <button type="button" class="btn btn-purple" data-toggle="modal" data-target="#ratepop">Rate &#9733;</button>
+
+                    <!-- Modal 
+                    <div class="modal fade" id="ratepop" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5>Rate the photo by sliding the bar</h5>
+                              <!-- <span aria-hidden="true">&times;</span> -
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="/like" method="POST">
+                                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                                <div class="form-group">
+                                    <label>How much like?</label>
+                                    <input type="range" class="form-control-range" id="formControlRange" min=1, max=5 name="rating">
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit Rating</button>
+                                {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                                {% endif %}
+                            </form> <!-- /like --
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <form action="/full_photo_info" method="POST">
+                        <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
+
+                        <button type="submit" class="btn btn-blue">Full Details &#8599; </button>
+                        {% if error %}
+                            <p class="error"><strong>Error:</strong> {{error}}</p>
+                        {% endif %}
+                   </form> <!-- full photo info --
+                </div>
+            </div> <!-- /card body --
+        </div>
+    </div>{% endfor %}
+</div>
+</div> -->
+>>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
 
 <br>
-<a href="/logout">Logout</a>
+    <script>
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
+    </script>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
