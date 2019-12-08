@@ -1,7 +1,75 @@
 <html>
 <head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Our styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
+    <!-- ------------------ NAVIGATION ------------------ -->
+    <nav class="navbar fixed-top navbar-dark bg-blue navbar-expand-lg">
+      <a href="/home" class="navbar-brand">
+        <img src="../static/css/imgs/favicon.png" height="50" class="d-inline-block align-top" alt="">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/home">Home</a>
+          </li>  
+          <li class="nav-item">
+            <a class="nav-link" href="/post_page">Post a Pic</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/follow_requests">Check Followers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        </ul>
+
+        <form action="/follow" method="POST" class="form-inline" >
+            <div class="input-group navfollow">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                </div>
+                <input class="form-control mr-sm-2" type="search" name = "username" placeholder="Enter a username" aria-label="Search" required/>
+
+                <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Follow</button>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </div>
+        </form>
+      </div>
+    </nav>
+
+    <!-- ----------------- /NAVIGATION ------------------ -->
+
+    <div class="jumbotron jumbotron-fluid" id="homepage">
+      <div class="container">
+        <form action="/post" method="POST">
+            <br/><br/>
+            <h1>Photo by {{photo["photoPoster"]}}</h1>
+        </form>
+      </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <img style="width: 50%" src={{photo["filepath"]}}></img>
+            </div>
+            <div class="col-lg-6">
+
+            </div>
+        </div>
+    </div>
 
     <div>
         <h1>Photo by {{photo["photoPoster"]}}</h1>
@@ -14,6 +82,7 @@
         {% for like in likes %}
             <div style = "MARY STYLE THIS">
                 <label>{{like["username"]}}</label>
+<<<<<<< HEAD
                 <p>{{like["rating"]}}</p>
             </div>
         {% endfor %}
@@ -29,6 +98,44 @@
             <h2>Tag someone! (Separate by commas)</h2>
             <form action="/tag" method="POST">
                 <input type="text" name = "tagged" placeholder="Enter Comma-separated list" required/> </br>
+=======
+                p>{{like["rating"]}}</p>
+                <p>{{like["rating"]}}</p>
+            </div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="rating-block">
+            <h4>Your rating</h4>
+            <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+
+                <!-- <p>{{like["rating"]}}</p> -->
+
+
+            </div>
+        {% endfor %}
+        {% if photo["photoPoster"] == username %}
+            <h2>Tag someone! (Separate by commas)</h2>
+            <form action="/tag" method="POST">
+                <input type="text" name = "tagged" placeholder="filepath" required/> </br>
+>>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
                 <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
                 <input type="submit" value = Tag />
                 {% if error %}
@@ -42,6 +149,12 @@
 <a href="/follow_requests">Check followers</a>
 <br>
 <a href="/">Back</a>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 
 </body>
 
