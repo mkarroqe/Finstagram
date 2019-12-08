@@ -4,16 +4,38 @@
 <body>
 
     <div>
-        <h1>Photo by {{photo.photoPoster}}</h1>
+        <h1>Photo by {{photo["photoPoster"]}}</h1>
         <label>Posted on:</label>
-        <p>{{photo.postingDate}}</p>
-        <img src = {{photo.filepath}}></img>
-        <label>Poster First Name: {{photo.firstName}}</label>
-        <label>Poster Last Name: {{photo.lastName}}</label>
+        <p>{{photo["postingDate"]}}</p>
+        <img src = {{photo["filepath"]}}></img>
+        <label>Poster First Name: {{photo["firstName"]}}</label>
+        <label>Poster Last Name: {{photo["lastName"]}}</label>
+        <br>
         {% for like in likes %}
-            <label>{{like.username}}</label>
-            <p>{{like.rating}}</p>
+            <div style = "MARY STYLE THIS">
+                <label>{{like["username"]}}</label>
+                <p>{{like["rating"]}}</p>
+            </div>
         {% endfor %}
+		
+		<label>In this photo:</label>
+		{% for user in tagged_users %}
+			<div style = "MARY STYLE THIS">
+                <p>{{user['username']}}</p>
+            </div>
+		{% endfor %}
+		
+        {% if photo["photoPoster"] == username %}
+            <h2>Tag someone! (Separate by commas)</h2>
+            <form action="/tag" method="POST">
+                <input type="text" name = "tagged" placeholder="Enter Comma-separated list" required/> </br>
+                <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
+                <input type="submit" value = Tag />
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
+        {% endif %}
     </div>
 
 

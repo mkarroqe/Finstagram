@@ -6,20 +6,24 @@
 
         <!-- Our styling -->
         <!-- TODO: fix url? -->
-        <link rel="stylesheet" href="../static/css/main.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     </head>
     <body>
-    <form action="/post_photo" method="POST">
-        <input type="text" name = "filepath" placeholder="filepath" required/> </br>
-        <input type="text" name = "caption" placeholder="caption" required/> </br>
-        <input type="checkbox" name = "allFollowers" value="false" /></br>
-        <input type="text" name = "tagged" placeholder="Enter username to tag">
-
-        <input type="submit" value = Post />
-        {% if error %}
-            <p class="error"><strong>Error:</strong> {{error}}</p>
-        {% endif %}
-    </form>
+        {% for line in requests %}
+            <form action="/tag_accept" method="POST">
+                <div style="display: flex;">
+                    <p style = "margin: 0;">{{line.photoPoster}}'s picture</p>
+					<div class="card" style="width: 18rem;">
+						<img src={{line.filepath}} class="card-img-top">
+                    <input type = "hidden" name = "photoID" value = {{line.photoID}}>
+                    <input type="submit" value = Accept style = "margin-left: 5px"/>
+                </div>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
+        {% endfor %}
+    
 
     <a href="/home">Go back</a>
 

@@ -117,14 +117,17 @@ def fullPhotoInfo():
     Photo JOIN Person ON Person.username = Photo.photoPoster WHERE photoID=%s'''
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
-    data = cursor.fetchall()
-    cursor.close()
-    cursor = conn.cursor()
+    data = cursor.fetchone()
+    
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
     cursor.execute(query2, (photoID))
     likeData = cursor.fetchall()
-    cursor.close()
-    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
+    
+    query3 = 'SELECT username FROM tagged WHERE photoID = %s'
+    cursor.execute(query3, photoID)
+    tagData = cursor.fetchall()
+ 
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
 
 @app.route('/post_page')
 @login_required
@@ -143,6 +146,38 @@ def follow():
     cursor.close()
     return redirect(url_for('home'))
 
+@app.route('/like', methods=['GET', 'POST'])
+@login_required
+def like():
+    user = session['username']
+    photoID = request.form["photoID"]
+    rating = request.form["rating"]
+    cursor = conn.cursor()
+    ins = ("INSERT INTO Likes VALUES( %s, %s, %s, %s)")
+    cursor.execute(ins, (user,photoID, datetime.now().isoformat(), rating))
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
+@app.route('/tag', methods=['GET', 'POST'])
+@login_required
+def tag(tagged = None):
+    if (tagged == None):
+	    tagged = request.form['tagged']
+    user = session['username']
+    getID = "SELECT max(photoID) FROM Photo"
+    cursor = conn.cursor()
+    cursor.execute(getID,)
+    photoID = cursor.fetchone()
+    taggedUsers = tagged.split(",")
+    ins = ("INSERT INTO Tagged VALUES( %s, %s, %s)")
+    for user in taggedUsers:  
+        sanatizedUser = user.strip()
+        cursor.execute(ins, (sanatizedUser,photoID[max(photoID)], 0))
+        conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
 @app.route('/follow_accept', methods=['GET', 'POST'])
 @login_required
 def followAccept():
@@ -151,6 +186,18 @@ def followAccept():
     cursor = conn.cursor()
     ins = "UPDATE Follow SET followstatus=1 WHERE username_followed = %s AND username_follower = %s"
     cursor.execute(ins, (user, follower))
+    conn.commit()
+    cursor.close()
+    return redirect(url_for('home'))
+
+@app.route('/tag_accept', methods=['GET', 'POST'])
+@login_required
+def tagAccept():
+    user = session['username']
+    photoID = request.form['photoID']
+    cursor = conn.cursor()
+    ins = "UPDATE tagged SET tagStatus=1 WHERE username= %s AND photoID = %s"
+    cursor.execute(ins, (user, photoID))
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
@@ -167,25 +214,95 @@ def followRequests():
     cursor.close()
     return render_template("follow_requests.html", requests = data)
 
+@app.route('/tag_requests', methods=['GET', 'POST'])
+@login_required
+def tagRequests():
+    user = session['username']
+    cursor = conn.cursor()
+    ins = "SELECT username, Photo.photoID, photoPoster, filepath FROM Tagged JOIN Photo ON Photo.photoID = Tagged.photoID WHERE username = %s AND tagstatus != 1"
+    cursor.execute(ins, (user))
+    data = cursor.fetchall()
+    conn.commit()
+    cursor.close()
+    return render_template("tag_requests.html", requests = data)
+
 @app.route('/post_photo', methods=['GET', 'POST'])
 @login_required
 def postPhoto():
     user = session['username']
     filepath = request.form["filepath"]
     caption = request.form["caption"]
+    tagged = request.form["tagged"]
+    time = datetime.now().isoformat()
     if "allFollowers" in request.form:
         allFollowers = 1
     else:
         allFollowers = 0
     print("All Followers val: "+ str(allFollowers))
-
     cursor = conn.cursor()
     ins = "INSERT INTO Photo (postingDate, filepath, allFollowers, caption, photoPoster) VALUES( %s, %s, %s, %s, %s)"
-    cursor.execute(ins, (datetime.now().isoformat(),filepath, allFollowers, caption, user))
+    cursor.execute(ins, (time,filepath, allFollowers, caption, user))
     conn.commit()
     cursor.close()
+    if (tagged):
+        tag(tagged)
     return redirect(url_for('home'))
 
+@app.route('/newGroup', methods = ['GET', 'POST'])
+@login_required
+def newGroup():
+	user = session['username']
+	groupName = request.form['groupName']
+	description = request.form['description']
+	member_list = request.form['members']
+	member_list = member_list.split(",")
+	cursor = conn.cursor()
+	query = 'SELECT username_followed FROM follow WHERE username_follower = %s'
+	cursor.execute(query, user)
+	follows = cursor.fetchall()
+	follow_list = []
+	for members in follows:
+		follow_list.append(members["username_followed"])
+	print(follow_list)
+	cursor.close()
+	for member in member_list:
+		print(member)
+		if member.strip() not in follow_list:
+			error = "You do not follow " + member.strip()
+			return render_template("friendGroups.html", error = error)
+	query = "INSERT INTO belongTo (member_username, owner_username, groupName) VALUES( %s, %s, %s)"
+	for member in member_list:
+		cursor = conn.cursor()
+		cursor.execute(query, (member, user, groupName))
+		conn.commit()
+		cursor.close()
+	cursor = conn.cursor()
+	ins = 'INSERT INTO friendgroup (groupOwner, groupName, description) VALUES (%s, %s, %s)'
+	cursor.execute(ins, (user, groupName, description))
+	conn.commit()
+	cursor.close()
+	return render_template("friendGroups.html", error = None)
+	
+	
+@app.route('/friendGroups', methods=['GET', 'POST'])
+@login_required
+def seeFriendGroup():
+	user = session['username']
+	cursor = conn.cursor()
+	query = 'SELECT DISTINCT groupName FROM belongTo WHERE ((member_username = %s) OR (owner_username = %s)) ORDER BY groupName ASC'
+	cursor.execute(query, (user, user))
+	groups = cursor.fetchall()
+	cursor.close()
+	for curr in groups:
+		cursor = conn.cursor()
+		curr_query = 'SELECT member_username FROM belongTo WHERE groupName = %s'
+		cursor.execute(curr_query, curr["groupName"])
+		curr["members"] = []
+		for member in cursor:
+			curr["members"].append(member["member_username"])
+		cursor.close()
+	return render_template('friendGroups.html', groups = groups) 
+	#returns a list of dictionaries. Each dictionary contains "groupName" (which is a string) and "members" (which is a list)
 
 
 app.secret_key = '57902857h20398572h034fj059jf832457h24'
