@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2">
+        {% for line in photos %}
+            <div class="card" style="width: 18rem;">
+              <img src={{line.filepath}} class="card-img-top">
+              <div class="card-body">
+                <h5 class="card-title">{{line.photoPoster}}</h5>
+                <p class="card-text"><small>{{line.postingDate}}</small></p>
+                <p class="card-text">Post {{line.photoID}}, by {{line.firstName}} {{line.lastName}}</p>
+              </div>
+              <form action="/full_photo_info" method="POST">
+                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                <!-- <input type="submit" value = "More Info" /> -->
+                <button type="submit" class="btn btn-blue btn-block center">Full Details &#8599; </button>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+               </form>
+               <form action="/like" method="POST">
+                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
+                <select name = "rating">
+                    <option value = 1 >1</option>
+                    <option value = 2>2</option>
+                    <option value = 3>3</option>
+                    <option value = 4>4</option>
+                    <option value = 5 selected> 5</option>
+                </select>
+                <input type="submit" value = "Rate" />
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
+</div>
+
+<h2>Enter a username to unfollow :-(</h2>
+<form action="/unfollow" method="POST">
+    <input type="text" name = "username" placeholder="username" required/> </br>
+    <input type="submit" value = Follow />
+    {% if error %}
+        <p class="error"><strong>Error:</strong> {{error}}</p>
+    {% endif %}
+</form>

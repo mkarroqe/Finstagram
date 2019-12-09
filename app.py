@@ -119,18 +119,6 @@ def fullPhotoInfo():
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
     data = cursor.fetchone()
-<<<<<<< HEAD
-    
-    query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
-    cursor.execute(query2, (photoID))
-    likeData = cursor.fetchall()
-    
-    query3 = 'SELECT username FROM tagged WHERE photoID = %s'
-    cursor.execute(query3, photoID)
-    tagData = cursor.fetchall()
- 
-    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
-=======
     cursor.close()
     cursor = conn.cursor()
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
@@ -141,7 +129,6 @@ def fullPhotoInfo():
     print(data)
     print(likeData)
     return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
 
 @app.route('/post_page')
 @login_required
@@ -160,6 +147,35 @@ def follow():
     cursor.close()
     return redirect(url_for('home'))
 
+# IN PROGRESS STILL -mary ----------------------
+@app.route('/unfollow', methods=['POST'])
+@login_required
+def unfollow():
+    unfollower = session['username']
+    unfollowee = request.form["unfollowee"]
+
+    try:
+        # Query used to remove the follow from the Follow table
+        deleteQuery = "DELETE FROM Follow WHERE username_follower=%s AND username_followed=%s"
+        with connection.cursor() as cursor:
+            if unfollowee != unfollower:
+                cursor.execute(deleteQuery, (unfollowee, unfollower))
+                message = "Unfollowed " + unfollowee        
+            else:
+                message = "You cannot unfollow yourself"    
+    except:
+        message = "Unfollowing " + unfollowee + "failed."
+
+    return render_template("followers.html", message=message, username=session["username"])
+
+    # cursor = conn.cursor()
+    # ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
+    # cursor.execute(ins, (followee,user, 0))
+    # conn.commit()
+    # cursor.close()
+    # return redirect(url_for('home'))
+# ----------------------------------------------
+
 @app.route('/like', methods=['GET', 'POST'])
 @login_required
 def like():
@@ -172,24 +188,6 @@ def like():
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
-<<<<<<< HEAD
-
-@app.route('/tag', methods=['GET', 'POST'])
-@login_required
-def tag(tagged = None):
-    if (tagged == None):
-	    tagged = request.form['tagged']
-    user = session['username']
-    getID = "SELECT max(photoID) FROM Photo"
-    cursor = conn.cursor()
-    cursor.execute(getID,)
-    photoID = cursor.fetchone()
-    taggedUsers = tagged.split(",")
-    ins = ("INSERT INTO Tagged VALUES( %s, %s, %s)")
-    for user in taggedUsers:  
-        sanatizedUser = user.strip()
-        cursor.execute(ins, (sanatizedUser,photoID[max(photoID)], 0))
-=======
     
 @app.route('/tag', methods=['GET', 'POST'])
 @login_required
@@ -203,7 +201,6 @@ def tag():
     for user in taggedUsers:  
         sanatizedUser = user.replace(" ","")
         cursor.execute(ins, (sanatizedUser,photoID, 0))
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
         conn.commit()
     cursor.close()
     return redirect(url_for('home'))
@@ -224,15 +221,9 @@ def followAccept():
 @login_required
 def tagAccept():
     user = session['username']
-<<<<<<< HEAD
-    photoID = request.form['photoID']
-    cursor = conn.cursor()
-    ins = "UPDATE tagged SET tagStatus=1 WHERE username= %s AND photoID = %s"
-=======
     photoID = request.form["photoID"]
     cursor = conn.cursor()
     ins = "UPDATE Tagged SET tagstatus=1 WHERE username= %s AND photoID = %s"
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
     cursor.execute(ins, (user, photoID))
     conn.commit()
     cursor.close()
@@ -253,25 +244,16 @@ def followRequests():
 @app.route('/tag_requests', methods=['GET', 'POST'])
 @login_required
 def tagRequests():
-<<<<<<< HEAD
-    user = session['username']
-    cursor = conn.cursor()
-    ins = "SELECT username, Photo.photoID, photoPoster, filepath FROM Tagged JOIN Photo ON Photo.photoID = Tagged.photoID WHERE username = %s AND tagstatus != 1"
-=======
     # NOT FINISHED
     user = session['username']
     cursor = conn.cursor()
     ins = "SELECT username, photoID, photoPoster, filepath FROM Tagged WHERE username = %s AND tagstatus != 1 JOIN Photo ON Photo.photoID = Tagged.photoID"
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
     cursor.execute(ins, (user))
     data = cursor.fetchall()
     conn.commit()
     cursor.close()
-<<<<<<< HEAD
-    return render_template("tag_requests.html", requests = data)
-=======
+
     return render_template("check_tagged.html", requests = data)
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
 
 @app.route('/post_photo', methods=['GET', 'POST'])
 @login_required
@@ -282,10 +264,7 @@ def postPhoto():
     filepath = ROOT + request.form["filepath"]
 
     caption = request.form["caption"]
-<<<<<<< HEAD
-    tagged = request.form["tagged"]
-=======
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
+
     time = datetime.now().isoformat()
     if "allFollowers" in request.form:
         allFollowers = 1
@@ -301,7 +280,6 @@ def postPhoto():
         tag(tagged)
     return redirect(url_for('home'))
 
-<<<<<<< HEAD
 @app.route('/newGroup', methods = ['GET', 'POST'])
 @login_required
 def newGroup():
@@ -358,9 +336,6 @@ def seeFriendGroup():
 	return render_template('friendGroups.html', groups = groups) 
 	#returns a list of dictionaries. Each dictionary contains "groupName" (which is a string) and "members" (which is a list)
 
-
-=======
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
 app.secret_key = '57902857h20398572h034fj059jf832457h24'
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask

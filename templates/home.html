@@ -4,136 +4,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- Our styling -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="../static/css/main.css">
     <!-- <link rel="stylesheet" href="/Users/mkarroqe/Desktop/github/Finstagram/static/css/main.css" /> -->
 </head>
 <body>
-<<<<<<< HEAD
-
-    <div class="container">
-        <img class="small" src="../static/css/imgs/logo.png" />
-    </div>
-    <div class="jumbotron jumbotron-fluid" id="homepage">
-      <div class="container">
-        <form action="/post" method="POST">
-            <h1>Welcome, back {{username}}!</h1> 
-        </form>
-        <a href ="/post_page"><button type="button" class="btn btn-lg btn-blue">Post a Photo</button></a>
-        <a href="/follow_requests"><button type="button" class="btn btn-lg btn-green">Check followers</button></a>
-		<a href="/tag_requests"><button type="button" class="btn btn-lg btn-green">Tag Requests</button></a>
-      </div>
-    </div>
-
-<!-- <style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-    img{
-        width: 100px;
-    }
-</style> -->
-
-<div class="container">
-  <div class="row">
-    <div class="col-sm-2">
-        {% for line in photos %}
-            <div class="card" style="width: 18rem;">
-              <img src={{line.filepath}} class="card-img-top">
-              <div class="card-body">
-                <h5 class="card-title">{{line.photoPoster}}</h5>
-                <p class="card-text"><small>{{line.postingDate}}</small></p>
-                <p class="card-text">Post {{line.photoID}}, by {{line.firstName}} {{line.lastName}}</p>
-              </div>
-              <form action="/full_photo_info" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <!-- <input type="submit" value = "More Info" /> -->
-                <button type="submit" class="btn btn-blue btn-block center">Full Details &#8599; </button>
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-               </form>
-               <form action="/like" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <select name = "rating">
-                    <option value = 1 >1</option>
-                    <option value = 2>2</option>
-                    <option value = 3>3</option>
-                    <option value = 4>4</option>
-                    <option value = 5 selected> 5</option>
-                </select>
-                <input type="submit" value = "Rate" />
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-            </form>
-            </div>
-        {% endfor %}
-    </div>
-  </div>
-</div>
-
-<!-- Change to styled div
-<table>
-	<th>postID</th>
-    <th>Username</th>
-    <th>Photo</th>
-    <th>First Name</th>
-    <th>Last Name</th>
-    <th>Time Posted</th>
-    <th>More Data</th>
-    <th>Like</th>
-
-
-{% for line in photos %}
-	<tr>
-		<td>{{line.photoID}}</td>
-        <td>{{line.photoPoster}}</td>
-        <td><img src ={{line.filepath}}></td>
-        <td>{{line.firstName}}</td>
-        <td>{{line.lastName}}</td>
-        <td>{{line.postingDate}}</td>
-        <td><form action="/full_photo_info" method="POST">
-            <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-            <input type="submit" value = "More Info" />
-            {% if error %}
-                <p class="error"><strong>Error:</strong> {{error}}</p>
-            {% endif %}
-        </form></td>
-        <td>
-            <form action="/like" method="POST">
-                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                <select name = "rating">
-                    <option value = 1 >1</option>
-                    <option value = 2>2</option>
-                    <option value = 3>3</option>
-                    <option value = 4>4</option>
-                    <option value = "5" selected> 5</option>
-                </select>
-                <input type="submit" value = "Rate" />
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
-                {% endif %}
-            </form>
-        </td>
-	</tr>
-{% endfor %}
-</table> -->
-<br>
-<h2>Enter a username to follow!</h2>
-<form action="/follow" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="submit" value = Follow />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
-
-<h>FriendGroups</h>
-<form action="/friendGroups" method="POST">
-	<input type="submit" value = "My Friend Groups" />
-</form>
-
-=======
+<!-- ------------------ HEADER ------------------ -->
     <!-- ------------------ NAVIGATION ------------------ -->
     <nav class="navbar fixed-top navbar-dark bg-blue navbar-expand-lg">
       <a href="/home" class="navbar-brand">
@@ -153,6 +28,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/follow_requests">Check Followers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tag_requests">Tag Requests</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
@@ -178,122 +56,80 @@
     <!-- ----------------- /NAVIGATION ------------------ -->
 
     <div class="jumbotron jumbotron-fluid" id="homepage">
-      <div class="container">
-        <form action="/post" method="POST">
-            <br/><br/>
-            <h1>Welcome, back {{username}}!</h1> 
-            <p>Here's the latest from your followers.</p>
-        </form>
-      </div>
-    </div>
-<!-- </div> -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <form action="/post" method="POST">
+                        <br/><br/>
+                        <h1>Welcome, back {{username}}!</h1> 
+                        <p>Here's the latest from your followers.</p>
+                    </form>
+                </div>
+                <div class="col-lg-4">
+                    <br/><br/><br/><br/>
+                    <h5>Enter a username to unfollow :-(</h5>
+                    <form action="/unfollow" method="POST" class="form-inline" >
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@</div>
+                            </div>
+                            <input class="form-control mr-sm-2" type="search" name = "unfollowee" placeholder="Enter a username" aria-label="Search" required/>
 
-<div class="container">
-    <div class="row">
-        {% for line in photos %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card mb-3 text-center">
-              <img style="height: 200px; object-fit: cover;" class="card-img-top" src={{line.filepath}} /> 
-
-              <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <h5>{{line.photoPoster}}</h5>
-                        <form action="/full_photo_info" method="POST">
-                            <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
-
-                            <button type="submit" class="btn btn-pink">Full Details &#8599; </button>
+                            <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Unfollow</button>
                             {% if error %}
                                 <p class="error"><strong>Error:</strong> {{error}}</p>
                             {% endif %}
-                        </form> <!-- full photo info -->
-                    </div>
-                    <div class="col-lg-6">
-                        <p class="card-text">{{line.caption}}</p>
-                    </div>
-                </div><!-- row -->
-
-              </div>
-              <div class="card-footer text-muted">
-                {{line.postingDate}}
-              </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4">
+                    <br/><br/><br/><br/>
+                    <h5>FriendGroups</h5>
+                    <form action="/friendGroups" method="POST">
+                        <button type="submit" class="btn btn-green">View My Friend Groups</button>
+                    </form>
+                </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-</div>
+<!-- ------------------ /HEADER ----------------- -->
 
-<!-- <hr />
+<!-- ------------------ CONTENT ----------------- -->
+    <div class="container">
+        <div class="row">
+            {% for line in photos %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card mb-3 text-center">
+                  <img style="height: 200px; object-fit: cover;" class="card-img-top" src={{line.filepath}} />
 
-<div class="container">
-  <div class="row">
-    {% for line in photos %}
-    <div class="col-lg-12">
-        <div class="card" style="height: 28rem;">
-            <img style="width:21.75rem" src={{line.filepath}} class="card-img-top">
-            <div class="card-body">
-                <h5 class="card-title">{{line.photoPoster}}</h5>
-                <p class="card-text"><small>{{line.postingDate}}</small></p>
+                  <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5>{{line.photoPoster}}</h5>
+                            <form action="/full_photo_info" method="POST">
+                                <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
 
-                <p class="card-text"> {{line.caption}}</p>
-                
-                <div class="col-lg-12"> 
-                    <button type="button" class="btn btn-purple" data-toggle="modal" data-target="#ratepop">Rate &#9733;</button>
-
-                    <!-- Modal 
-                    <div class="modal fade" id="ratepop" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5>Rate the photo by sliding the bar</h5>
-                              <!-- <span aria-hidden="true">&times;</span> -
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <form action="/like" method="POST">
-                                <input type="hidden" name = "photoID" value = {{line.photoID}} required/> </br>
-                                <div class="form-group">
-                                    <label>How much like?</label>
-                                    <input type="range" class="form-control-range" id="formControlRange" min=1, max=5 name="rating">
-                                </div>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Submit Rating</button>
+                                <button type="submit" class="btn btn-pink">Full Details &#8599; </button>
                                 {% if error %}
-                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                                    <p class="error"><strong>Error:</strong> {{error}}</p>
                                 {% endif %}
-                            </form> <!-- /like --
-                          </div>
+                            </form> <!-- full photo info -->
                         </div>
-                      </div>
-                    </div>
+                        <div class="col-lg-6">
+                            <p class="card-text">{{line.caption}}</p>
+                        </div>
+                    </div><!-- row -->
 
-                    <form action="/full_photo_info" method="POST">
-                        <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
-
-                        <button type="submit" class="btn btn-blue">Full Details &#8599; </button>
-                        {% if error %}
-                            <p class="error"><strong>Error:</strong> {{error}}</p>
-                        {% endif %}
-                   </form> <!-- full photo info --
+                  </div>
+                  <div class="card-footer text-muted">
+                    {{line.postingDate}}
+                  </div>
                 </div>
-            </div> <!-- /card body --
+            </div>
+            {% endfor %}
         </div>
-    </div>{% endfor %}
-</div>
-</div> -->
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
-
-<br>
-    <script>
-    $('#myModal').on('shown.bs.modal', function () {
-      $('#myInput').trigger('focus')
-    })
-    </script>
-
-    <!-- Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </div>
+<!-- ------------------ /CONTENT ---------------- -->
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
