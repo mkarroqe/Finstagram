@@ -119,7 +119,6 @@ def fullPhotoInfo():
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
     data = cursor.fetchone()
-<<<<<<< HEAD
     
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
     cursor.execute(query2, (photoID))
@@ -131,18 +130,6 @@ def fullPhotoInfo():
  
     return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
 
-=======
-    cursor.close()
-    cursor = conn.cursor()
-    query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
-    cursor.execute(query2, (photoID))
-    likeData = cursor.fetchall()
-    cursor.close()
-    print(user)
-    print(data)
-    print(likeData)
-    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
->>>>>>> 07f90c173d5442cd258462829a29d1cbce42edf2
 
 @app.route('/post_page')
 @login_required
