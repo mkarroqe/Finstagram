@@ -119,6 +119,7 @@ def fullPhotoInfo():
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
     data = cursor.fetchone()
+<<<<<<< HEAD
     
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
     cursor.execute(query2, (photoID))
@@ -130,6 +131,18 @@ def fullPhotoInfo():
  
     return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
 
+=======
+    cursor.close()
+    cursor = conn.cursor()
+    query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
+    cursor.execute(query2, (photoID))
+    likeData = cursor.fetchall()
+    cursor.close()
+    print(user)
+    print(data)
+    print(likeData)
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
+>>>>>>> 07f90c173d5442cd258462829a29d1cbce42edf2
 
 @app.route('/post_page')
 @login_required
@@ -156,6 +169,35 @@ def follow():
     cursor.close()
     return redirect(url_for('home'))
 
+# IN PROGRESS STILL -mary ----------------------
+@app.route('/unfollow', methods=['POST'])
+@login_required
+def unfollow():
+    unfollower = session['username']
+    unfollowee = request.form["unfollowee"]
+
+    try:
+        # Query used to remove the follow from the Follow table
+        deleteQuery = "DELETE FROM Follow WHERE username_follower=%s AND username_followed=%s"
+        with connection.cursor() as cursor:
+            if unfollowee != unfollower:
+                cursor.execute(deleteQuery, (unfollowee, unfollower))
+                message = "Unfollowed " + unfollowee        
+            else:
+                message = "You cannot unfollow yourself"    
+    except:
+        message = "Unfollowing " + unfollowee + "failed."
+
+    return render_template("followers.html", message=message, username=session["username"])
+
+    # cursor = conn.cursor()
+    # ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
+    # cursor.execute(ins, (followee,user, 0))
+    # conn.commit()
+    # cursor.close()
+    # return redirect(url_for('home'))
+# ----------------------------------------------
+
 @app.route('/like', methods=['GET', 'POST'])
 @login_required
 def like():
@@ -168,6 +210,7 @@ def like():
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
+
 
 @app.route('/tag', methods=['GET', 'POST'])
 @login_required
@@ -330,7 +373,6 @@ def seeFriendGroup():
 		cursor.close()
 	return render_template('friendGroups.html', groups = groups) 
 	#returns a list of dictionaries. Each dictionary contains "groupName" (which is a string) and "members" (which is a list)
-
 
 app.secret_key = '57902857h20398572h034fj059jf832457h24'
 #Run the app on localhost port 5000
