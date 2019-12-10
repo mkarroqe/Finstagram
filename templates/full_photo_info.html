@@ -82,23 +82,6 @@
         {% for like in likes %}
             <div style = "MARY STYLE THIS">
                 <label>{{like["username"]}}</label>
-<<<<<<< HEAD
-                <p>{{like["rating"]}}</p>
-            </div>
-        {% endfor %}
-		
-		<label>In this photo:</label>
-		{% for user in tagged_users %}
-			<div style = "MARY STYLE THIS">
-                <p>{{user['username']}}</p>
-            </div>
-		{% endfor %}
-		
-        {% if photo["photoPoster"] == username %}
-            <h2>Tag someone! (Separate by commas)</h2>
-            <form action="/tag" method="POST">
-                <input type="text" name = "tagged" placeholder="Enter Comma-separated list" required/> </br>
-=======
                 p>{{like["rating"]}}</p>
                 <p>{{like["rating"]}}</p>
             </div>
@@ -135,7 +118,6 @@
             <h2>Tag someone! (Separate by commas)</h2>
             <form action="/tag" method="POST">
                 <input type="text" name = "tagged" placeholder="filepath" required/> </br>
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
                 <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
                 <input type="submit" value = Tag />
                 {% if error %}

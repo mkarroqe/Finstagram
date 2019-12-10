@@ -5,10 +5,6 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <!-- Our styling -->
-<<<<<<< HEAD
-        <!-- TODO: fix url? -->
-=======
->>>>>>> 6874b74248601afbb5e1fbff7903e521c2e1fff1
         <link rel="stylesheet" href="../static/css/main.css" />
     </head>
     <body>
@@ -108,8 +104,20 @@
                   <label class="form-check-label" for="invalidCheck">
                     Post to all followers
                   </label>
-                  <small>(Group feature coming soon)</small>
                 </div>
+				<div class="row">
+				  <div class="col-lg-4">
+					<div class="form-group">
+					  <select class="selectpicker form-control" name="groupSelected">
+						<option>-- Select --</option>
+						{% for group in friendGroups %}
+							<option> {{group['groupName']}} owner: {{group['owner_username']}}</option>
+						{% endfor %}
+						</select>
+					</div>
+					<div class="col-lg-3"></div>
+					</div>
+				</div>
                 <div class="col-lg-2">
                     <button style="width:100%" class="btn btn-info" type="submit">Post</button>
                     {% if error %}
