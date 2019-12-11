@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 conn = pymysql.connect(host='localhost',
-                       port = 20001,
+                       port = 20000,
                        user='root',
                        password='root',
                        db='finstagram',
@@ -120,21 +120,29 @@ def fullPhotoInfo():
     # query = "SELECT * FROM Photo WHERE photoPoster = %s ORDER BY postingDate DESC"
     cursor.execute(query, (photoID))
     data = cursor.fetchone()
-    cursor.close()
-    cursor = conn.cursor()
+    
     query2 = "SELECT username, rating FROM likes WHERE photoID = %s"
     cursor.execute(query2, (photoID))
     likeData = cursor.fetchall()
-    cursor.close()
-    print(user)
-    print(data)
-    print(likeData)
-    return render_template('full_photo_info.html', username=user, photo=data, likes=likeData)
+    
+    query3 = 'SELECT username FROM tagged WHERE photoID = %s'
+    cursor.execute(query3, photoID)
+    tagData = cursor.fetchall()
+ 
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
 
 @app.route('/post_page')
 @login_required
 def postPage():
-    return render_template('post_page.html')
+	user = session['username']
+	query = 'SELECT DISTINCT groupName, owner_username FROM belongTo WHERE member_username = %s OR owner_username = %s'
+	cursor = conn.cursor()
+	cursor.execute(query, (user, user))
+	groups = cursor.fetchall()
+	print(groups)
+	conn.commit()
+	cursor.close()
+	return render_template('post_page.html', friendGroups = groups)
 
 @app.route('/follow', methods=['GET', 'POST'])
 @login_required
@@ -198,19 +206,23 @@ def like():
     conn.commit()
     cursor.close()
     return redirect(url_for('home'))
-    
+
+
 @app.route('/tag', methods=['GET', 'POST'])
 @login_required
-def tag():
+def tag(tagged = None):
+    if (tagged == None):
+	    tagged = request.form['tagged']
     user = session['username']
-    tagged = request.form["tagged"]
-    photoID = request.form["photoID"]
-    taggedUsers = tagged.split(",")
+    getID = "SELECT max(photoID) FROM Photo"
     cursor = conn.cursor()
+    cursor.execute(getID,)
+    photoID = cursor.fetchone()
+    taggedUsers = tagged.split(",")
     ins = ("INSERT INTO Tagged VALUES( %s, %s, %s)")
     for user in taggedUsers:  
-        sanatizedUser = user.replace(" ","")
-        cursor.execute(ins, (sanatizedUser,photoID, 0))
+        sanatizedUser = user.strip()
+        cursor.execute(ins, (sanatizedUser,photoID[max(photoID)], 0))
         conn.commit()
     cursor.close()
     return redirect(url_for('home'))
@@ -231,9 +243,9 @@ def followAccept():
 @login_required
 def tagAccept():
     user = session['username']
-    photoID = request.form["photoID"]
+    photoID = request.form['photoID']
     cursor = conn.cursor()
-    ins = "UPDATE Tagged SET tagstatus=1 WHERE username= %s AND photoID = %s"
+    ins = "UPDATE tagged SET tagStatus=1 WHERE username= %s AND photoID = %s"
     cursor.execute(ins, (user, photoID))
     conn.commit()
     cursor.close()
@@ -254,16 +266,14 @@ def followRequests():
 @app.route('/tag_requests', methods=['GET', 'POST'])
 @login_required
 def tagRequests():
-    # NOT FINISHED
     user = session['username']
     cursor = conn.cursor()
-    ins = "SELECT username, photoID, photoPoster, filepath FROM Tagged WHERE username = %s AND tagstatus != 1 JOIN Photo ON Photo.photoID = Tagged.photoID"
+    ins = "SELECT username, Photo.photoID, photoPoster, filepath FROM Tagged JOIN Photo ON Photo.photoID = Tagged.photoID WHERE username = %s AND tagstatus != 1"
     cursor.execute(ins, (user))
     data = cursor.fetchall()
     conn.commit()
     cursor.close()
-
-    return render_template("check_tagged.html", requests = data)
+    return render_template("tag_requests.html", requests = data)
 
 @app.route('/post_photo', methods=['GET', 'POST'])
 @login_required
@@ -275,7 +285,7 @@ def postPhoto():
     filepath = ROOT + filename
 
     caption = request.form["caption"]
-
+    tagged = request.form["tagged"]
     time = datetime.now().isoformat()
     if "allFollowers" in request.form:
         allFollowers = 1
@@ -286,9 +296,26 @@ def postPhoto():
     ins = "INSERT INTO Photo (postingDate, filepath, allFollowers, caption, photoPoster) VALUES( %s, %s, %s, %s, %s)"
     cursor.execute(ins, (time,filepath, allFollowers, caption, user))
     conn.commit()
-    cursor.close()
-    if (tagged):
-        tag(tagged)
+	
+	#sharedWith:
+    if (request.form['groupSelected'] != "-- Select --"):
+        shareInfo = request.form['groupSelected'].split("owner:")
+        group = str(shareInfo[0].strip())
+        owner = str(shareInfo[1].strip())
+
+        getID = "SELECT max(photoID) FROM Photo"
+        cursor = conn.cursor()
+        cursor.execute(getID,)
+        photoID = cursor.fetchone()
+
+        sharePhoto = "INSERT INTO sharedwith (groupOwner, groupName, photoID) VALUES (%s, %s, %s)"
+        cursor.execute(sharePhoto, (owner, group, photoID[max(photoID)]))
+        conn.commit()
+        cursor.close()
+		
+	#tagged - redirects to tag()
+        if (tagged):
+            tag(tagged)
     return redirect(url_for('home'))
 
 @app.route('/newGroup', methods = ['GET', 'POST'])
@@ -307,21 +334,18 @@ def newGroup():
 	for members in follows:
 		follow_list.append(members["username_followed"])
 	print(follow_list)
-	cursor.close()
 	for member in member_list:
 		print(member)
 		if member.strip() not in follow_list:
 			error = "You do not follow " + member.strip()
 			return render_template("friendGroups.html", error = error)
-	query = "INSERT INTO belongTo (member_username, owner_username, groupName) VALUES( %s, %s, %s)"
-	for member in member_list:
-		cursor = conn.cursor()
-		cursor.execute(query, (member, user, groupName))
-		conn.commit()
-		cursor.close()
-	cursor = conn.cursor()
 	ins = 'INSERT INTO friendgroup (groupOwner, groupName, description) VALUES (%s, %s, %s)'
 	cursor.execute(ins, (user, groupName, description))
+	conn.commit()
+	query = "INSERT INTO belongTo (member_username, owner_username, groupName) VALUES( %s, %s, %s)"
+	for member in member_list:
+		cursor.execute(query, (member, user, groupName))
+		conn.commit()
 	conn.commit()
 	cursor.close()
 	return render_template("friendGroups.html", error = None)
