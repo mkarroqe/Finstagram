@@ -44,14 +44,15 @@ def register():
 
 # Authenticates the login
 # TODO: add salt -- done
-salt = "nacl-sodiumchlorid3"
+# salt = "nacl-sodiumchlorid3"
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
     if request.form:
         requestData = request.form
         username = requestData["username"]
         plaintextPasword = requestData["password"]
-        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest() + salt
+        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+        # hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest() + salt
 
         with conn.cursor() as cursor:
             query = "SELECT * FROM person WHERE username = %s AND password = %s"
