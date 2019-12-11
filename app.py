@@ -11,9 +11,9 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 conn = pymysql.connect(host='localhost',
-                       port = 20001,
+                       port = 3306,
                        user='root',
-                       password='root',
+                       password='%0Q4xK^pBV88B!5%n83nGKCo$2rK9QIATTUmqpB0X24IfX!e#H',
                        db='finstagram',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
@@ -125,10 +125,17 @@ def fullPhotoInfo():
     cursor.execute(query2, (photoID))
     likeData = cursor.fetchall()
     cursor.close()
+    cursor = conn.cursor()
+    query3 = "SELECT comment, poster FROM comments WHERE photoID = %s"
+    cursor.execute(query2, (photoID))
+    comments = cursor.fetchall()
+    cursor.close()
     print(user)
     print(data)
     print(likeData)
-    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData)
+    print("comments coming")
+    print(comments)
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, comments = comments)
 
 @app.route('/post_page')
 @login_required
@@ -278,6 +285,24 @@ def postPhoto():
     cursor.close()
     if (tagged):
         tag(tagged)
+    return redirect(url_for('home'))
+
+@app.route('/post_comment', methods=['GET', 'POST'])
+@login_required
+def postComment():
+    user = session['username']
+    print("Before get comment")
+    comment = request.form["userComment"]
+    print("Test"+comment)
+    photoID = request.form["photoID"]
+
+    time = datetime.now().isoformat()
+   
+    cursor = conn.cursor()
+    ins = "INSERT INTO comments (photoID, comment, poster, postingDate) VALUES( %s, %s, %s, %s)"
+    cursor.execute(ins, (photoID,comment, user, time))
+    conn.commit()
+    cursor.close()
     return redirect(url_for('home'))
 
 @app.route('/newGroup', methods = ['GET', 'POST'])

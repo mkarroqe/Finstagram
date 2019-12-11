@@ -79,6 +79,9 @@
         <label>Poster First Name: {{photo["firstName"]}}</label>
         <label>Poster Last Name: {{photo["lastName"]}}</label>
         <br>
+        {% for comment in comments %}
+          <p>{{comment["poster"]}}: {{comment["comment"]}}</p>
+        {% endfor %}
         {% for like in likes %}
             <div style = "MARY STYLE THIS">
                 <label>{{like["username"]}}</label>
