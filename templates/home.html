@@ -79,7 +79,7 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">@</div>
                             </div>
-                            <input class="form-control mr-sm-2" type="search" name = "unfollowee" placeholder="Enter a username" aria-label="Search" required/>
+                            <input class="form-control mr-sm-2" type="search" name = "username" placeholder="Enter a username" aria-label="Search" required/>
 
                             <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Unfollow</button>
                             {% if error %}
@@ -123,6 +123,16 @@
                         </div>
                         <div class="col-lg-6">
                             <p class="card-text">{{line.caption}}</p>
+                        </div>
+                        <div class="col-lg-12">
+                            <form action="/post_comment" method="POST">
+                                <input type="hidden" name = "photoID" value = {{line.photoID}} required/>
+                                <input type="text" name = "userComment" required/>
+                                <button type="submit" class="btn btn-pink">Post Comment &#8599; </button>
+                                {% if error %}
+                                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                                {% endif %}
+                            </form> 
                         </div>
                     </div><!-- row -->
 

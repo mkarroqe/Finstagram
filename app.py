@@ -13,11 +13,10 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 conn = pymysql.connect(host='localhost',
                        port = 3306,
                        user='root',
-                       password='root',
+                       password='%0Q4xK^pBV88B!5%n83nGKCo$2rK9QIATTUmqpB0X24IfX!e#H',
                        db='finstagram',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
-
 
 def login_required(f):
     @wraps(f)
@@ -43,7 +42,9 @@ def login():
 def register():
     return render_template('register.html')
 
-#Authenticates the login
+# Authenticates the login
+# TODO: add salt -- done
+# salt = "nacl-sodiumchlorid3"
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
     if request.form:
@@ -51,6 +52,7 @@ def loginAuth():
         username = requestData["username"]
         plaintextPasword = requestData["password"]
         hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+        # hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest() + salt
 
         with conn.cursor() as cursor:
             query = "SELECT * FROM person WHERE username = %s AND password = %s"
@@ -127,9 +129,19 @@ def fullPhotoInfo():
     query3 = 'SELECT username FROM tagged WHERE photoID = %s'
     cursor.execute(query3, photoID)
     tagData = cursor.fetchall()
+    cursor.close()
+    cursor = conn.cursor()
+    query4 = "SELECT comment, poster FROM comments WHERE photoID = %s"
+    cursor.execute(query4, (photoID))
+    comments = cursor.fetchall()
+    cursor.close()
+    print(user)
+    print(data)
+    print(likeData)
+    print("comments coming")
+    print(comments)
  
-    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData)
-
+    return render_template('full_photo_info.html', username=user, photo=data, likes = likeData, tagged_users=tagData, comments = comments)
 
 @app.route('/post_page')
 @login_required
@@ -160,22 +172,31 @@ def follow():
 @app.route('/unfollow', methods=['POST'])
 @login_required
 def unfollow():
-    unfollower = session['username']
-    unfollowee = request.form["unfollowee"]
+    user = session['username']
+    unfollowee = request.form["username"]
+    print("unfollowee:", unfollowee)
 
     try:
+        query = "UPDATE Follow SET followStatus=0 WHERE username_followed= %s AND username_follower= %s"
+
         # Query used to remove the follow from the Follow table
-        deleteQuery = "DELETE FROM Follow WHERE username_follower=%s AND username_followed=%s"
-        with connection.cursor() as cursor:
-            if unfollowee != unfollower:
-                cursor.execute(deleteQuery, (unfollowee, unfollower))
+        # deleteQuery = "DELETE FROM Follow WHERE username_follower=%s AND username_followed=%s"
+
+        with conn.cursor() as cursor:
+            if unfollowee != user:
+                cursor.execute(query, (unfollowee, user))
                 message = "Unfollowed " + unfollowee        
             else:
                 message = "You cannot unfollow yourself"    
     except:
         message = "Unfollowing " + unfollowee + "failed."
 
-    return render_template("followers.html", message=message, username=session["username"])
+    conn.commit()
+    cursor.close()
+    print(message)
+    return redirect(url_for('home'))
+
+    # return render_template("followers.html", message=message, username=session["username"])
 
     # cursor = conn.cursor()
     # ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
@@ -272,7 +293,8 @@ def postPhoto():
     user = session['username']
 
     ROOT = "static/css/imgs/posts/"
-    filepath = ROOT + request.form["filepath"]
+    filename = request.form["filepath"]
+    filepath = ROOT + filename
 
     caption = request.form["caption"]
     tagged = request.form["tagged"]
@@ -306,6 +328,24 @@ def postPhoto():
 	#tagged - redirects to tag()
         if (tagged):
             tag(tagged)
+    return redirect(url_for('home'))
+
+@app.route('/post_comment', methods=['GET', 'POST'])
+@login_required
+def postComment():
+    user = session['username']
+    print("Before get comment")
+    comment = request.form["userComment"]
+    print("Test"+comment)
+    photoID = request.form["photoID"]
+
+    time = datetime.now().isoformat()
+   
+    cursor = conn.cursor()
+    ins = "INSERT INTO comments (photoID, comment, poster, postingDate) VALUES( %s, %s, %s, %s)"
+    cursor.execute(ins, (photoID,comment, user, time))
+    conn.commit()
+    cursor.close()
     return redirect(url_for('home'))
 
 @app.route('/newGroup', methods = ['GET', 'POST'])
