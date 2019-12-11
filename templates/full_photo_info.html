@@ -54,44 +54,49 @@
     <div class="jumbotron jumbotron-fluid" id="homepage">
       <div class="container">
         <form action="/post" method="POST">
-            <br/><br/><br/>
-            <h1>Photo by {{photo["photoPoster"]}}</h1>
-            <label>Posted on: {{photo["postingDate"]}} by {{photo["firstName"]}} {{photo["lastName"]}}</label>
+            <div class="row">
+                <div class="col-lg-6">
+                    <br/><br/><br/>
+                    <h1>Photo by {{photo["photoPoster"]}}</h1>
+                    <p>{{photo["caption"]}}</p>
+                </div>
+                <div class="col-lg-6">
+                    <br/><br/><br/><br/>
+                    <label>Posted on: {{photo["postingDate"]}} by {{photo["firstName"]}} {{photo["lastName"]}}</label>
+                    <p>In this photo: 
+                        {% for user in taggedUsers %}
+                            {{user["username"]}}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
         </form>
       </div>
     </div>
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-4">
-                <img style="width: 300px" src = {{photo["filepath"]}}></img>
-            </div>
-
-            <!-- TODO: why is this a filepath to begin with? -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 position-fixed">
+                <img style="height: 300px" src = {{photo["filepath"]}}></img>
+            
                 {% if photo["photoPoster"] == username %}
-                    <h4>Tag someone!</h4>
-                    <label>(Separate by commas)</label>
+                    <br /><br />
                     <form action="/tag" method="POST">
-                        <div class="custom-file">
-                            <label class="btn btn-outline-info" for="my-file-selector">
-                                <input class="custom-file-input form-control" id="my-file-selector" type="file" name = "filepath" style="display:none" 
-                                onchange="$('#upload-file-info').html(this.files[0].name)" required/>
-                                Upload file here
-                            </label>
-                            <span class='label label-info' id="upload-file-info"></span>
-                        </div>
-                        <!-- <input type="text" name = "tagged" placeholder="filepath" required/> </br>
-                        <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
-                        <input type="submit" value = Tag />
+                        <h5>Tag someone!</h5>
+                        <input type="text" name = "tagged" placeholder="user, user, ..." required/> </br>
+                        <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/>
+                        <button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Tag</button>
                         {% if error %}
                             <p class="error"><strong>Error:</strong> {{error}}</p>
-                        {% endif %} -->
+                        {% endif %}
                     </form>
                 {% endif %}
             </div>
-            
-            <div class="col-sm-4">
+            <div class="col-lg-4"><!-- filler --></div>
+            <div class="col-lg-4">
+                <h4>Comments</h4>
+            </div>
+            <div class="col-lg-4">
                 <form action="/like" method="POST">
                     <input type="hidden" name = "photoID" value = {{photo.photoID}} required/> </br>
                     <select name = "rating">
@@ -108,7 +113,7 @@
                 </form>
                 {% for like in likes %}
                 <div class="rating-block">
-                    <h4>Your rating</h4>
+                    <h4>{{like["username"]}}'s rating</h4>
                     <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
                     <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
                       <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
@@ -128,13 +133,6 @@
                 </div>
             </div><!-- /col-sm-3 -->
             {% endfor %}
-
-            <div class = "col-lg-12">
-              <h2>Comments:</h2>
-              {% for comment in comments %}
-                <p><span>{{comment.poster}}</span>: {{comment.comment}}</p>
-              {% endfor %}
-            </div>
         </div><!-- /row -->
     </div>
 
