@@ -54,83 +54,82 @@
     <div class="jumbotron jumbotron-fluid" id="homepage">
       <div class="container">
         <form action="/post" method="POST">
-            <br/><br/>
+            <br/><br/><br/>
             <h1>Photo by {{photo["photoPoster"]}}</h1>
+            <label>Posted on: {{photo["postingDate"]}} by {{photo["firstName"]}} {{photo["lastName"]}}</label>
         </form>
       </div>
     </div>
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-6">
-                <img style="width: 50%" src={{photo["filepath"]}}></img>
-            </div>
-            <div class="col-lg-6">
-
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <h1>Photo by {{photo["photoPoster"]}}</h1>
-        <label>Posted on:</label>
-        <p>{{photo["postingDate"]}}</p>
-        <img src = {{photo["filepath"]}}></img>
-        <label>Poster First Name: {{photo["firstName"]}}</label>
-        <label>Poster Last Name: {{photo["lastName"]}}</label>
-        <br>
-        {% for like in likes %}
-            <div style = "MARY STYLE THIS">
-                <label>{{like["username"]}}</label>
-                p>{{like["rating"]}}</p>
-                <p>{{like["rating"]}}</p>
+            <div class="col-lg-4">
+                <img style="width: 300px" src = {{photo["filepath"]}}></img>
             </div>
 
-<div class="row">
-    <div class="col-sm-3">
-        <div class="rating-block">
-            <h4>Your rating</h4>
-            <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
-            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-            </button>
-        </div>
-    </div>
-
-                <!-- <p>{{like["rating"]}}</p> -->
-
-
-            </div>
-        {% endfor %}
-        {% if photo["photoPoster"] == username %}
-            <h2>Tag someone! (Separate by commas)</h2>
-            <form action="/tag" method="POST">
-                <input type="text" name = "tagged" placeholder="filepath" required/> </br>
-                <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
-                <input type="submit" value = Tag />
-                {% if error %}
-                    <p class="error"><strong>Error:</strong> {{error}}</p>
+            <!-- TODO: why is this a filepath to begin with? -->
+            <div class="col-lg-4">
+                {% if photo["photoPoster"] == username %}
+                    <h4>Tag someone!</h4>
+                    <label>(Separate by commas)</label>
+                    <form action="/tag" method="POST">
+                        <div class="custom-file">
+                            <label class="btn btn-outline-info" for="my-file-selector">
+                                <input class="custom-file-input form-control" id="my-file-selector" type="file" name = "filepath" style="display:none" 
+                                onchange="$('#upload-file-info').html(this.files[0].name)" required/>
+                                Upload file here
+                            </label>
+                            <span class='label label-info' id="upload-file-info"></span>
+                        </div>
+                        <!-- <input type="text" name = "tagged" placeholder="filepath" required/> </br>
+                        <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
+                        <input type="submit" value = Tag />
+                        {% if error %}
+                            <p class="error"><strong>Error:</strong> {{error}}</p>
+                        {% endif %} -->
+                    </form>
                 {% endif %}
-            </form>
-        {% endif %}
+            </div>
+            
+            <div class="col-sm-4">
+                <form action="/like" method="POST">
+                    <input type="hidden" name = "photoID" value = {{photo.photoID}} required/> </br>
+                    <select name = "rating">
+                        <option value = 1 >1</option>
+                        <option value = 2>2</option>
+                        <option value = 3>3</option>
+                        <option value = 4>4</option>
+                        <option value = "5" selected> 5</option>
+                    </select>
+                    <input type="submit" value = "Rate" />
+                    {% if error %}
+                        <p class="error"><strong>Error:</strong> {{error}}</p>
+                    {% endif %}
+                </form>
+                {% for like in likes %}
+                <div class="rating-block">
+                    <h4>Your rating</h4>
+                    <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div><!-- /col-sm-3 -->
+            {% endfor %}
+        </div><!-- /row -->
     </div>
-
-
-<a href="/follow_requests">Check followers</a>
-<br>
-<a href="/">Back</a>
 
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
