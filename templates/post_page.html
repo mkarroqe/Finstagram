@@ -98,8 +98,20 @@
                   <label class="form-check-label" for="invalidCheck">
                     Post to all followers
                   </label>
-                  <small>(Group feature coming soon)</small>
                 </div>
+				<div class="row">
+				  <div class="col-lg-4">
+					<div class="form-group">
+					  <select class="selectpicker form-control" name="groupSelected">
+						<option>-- Select --</option>
+						{% for group in friendGroups %}
+							<option> {{group['groupName']}} owner: {{group['owner_username']}}</option>
+						{% endfor %}
+						</select>
+					</div>
+					<div class="col-lg-3"></div>
+					</div>
+				</div>
                 <div class="col-lg-2">
                     <button style="width:100%" class="btn btn-info" type="submit">Post</button>
                     {% if error %}
