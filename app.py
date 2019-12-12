@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 conn = pymysql.connect(host='localhost',
-                       port = 20001,
+                       port = 3306,
                        user='root',
                        password='root',
                        db='finstagram',
@@ -249,9 +249,13 @@ def like():
 
 @app.route('/tag', methods=['GET', 'POST'])
 @login_required
-def tag(tagged = None):
+def tag(tagged = None, photoID = None):
 	if (tagged == None):
 		tagged = request.form['tagged']
+	
+	if (photoID == None):
+		photoID = request.form['photoID']
+	
 	taggedUsers = tagged.split(",")
 	user = session['username']
 	photoID = request.form["photo"]
@@ -272,7 +276,7 @@ def tag(tagged = None):
 		else:
 			error = sanatizedUser + " cannot see your posts!"
 			cursor.close()
-			return redirect('home')
+			return redirect(url_for'home')
 	conn.commit()
 	cursor.close()
 	return redirect(url_for('home'))
