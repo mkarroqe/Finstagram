@@ -10,18 +10,30 @@
     </head>
     <body>
         {% for line in requests %}
-            <form action="/tag_accept" method="POST">
+			<p style = "margin: 0;">{{line.photoPoster}}'s picture</p>
+			<div class="card" style="width: 18rem;">
+				<img src={{line.filepath}} class="card-img-top">
+			<form action="/tag_accept" method="POST">
                 <div style="display: flex;">
-                    <p style = "margin: 0;">{{line.photoPoster}}'s picture</p>
-					<div class="card" style="width: 18rem;">
-						<img src={{line.filepath}} class="card-img-top">
-                    <input type = "hidden" name = "photoID" value = {{line.photoID}}>
+					<input type = "hidden" name = "photoID" value = {{line.photoID}}>
                     <input type="submit" value = Accept style = "margin-left: 5px"/>
                 </div>
                 {% if error %}
                     <p class="error"><strong>Error:</strong> {{error}}</p>
                 {% endif %}
             </form>
+			
+			
+			<form action="/tag_decline" method="POST">
+				<div style="display: flex;">
+					<input type="submit" value = Decline style = "margin-left: 5px"/>
+					<input type = "hidden" name = "photoID" value = {{line.photoID}}>
+                </div>
+                {% if error %}
+                    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% endif %}
+            </form>
+			
         {% endfor %}
     
 

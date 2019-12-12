@@ -73,20 +73,12 @@
                     <h4>Tag someone!</h4>
                     <label>(Separate by commas)</label>
                     <form action="/tag" method="POST">
-                        <div class="custom-file">
-                            <label class="btn btn-outline-info" for="my-file-selector">
-                                <input class="custom-file-input form-control" id="my-file-selector" type="file" name = "filepath" style="display:none" 
-                                onchange="$('#upload-file-info').html(this.files[0].name)" required/>
-                                Upload file here
-                            </label>
-                            <span class='label label-info' id="upload-file-info"></span>
-                        </div>
-                        <!-- <input type="text" name = "tagged" placeholder="filepath" required/> </br>
-                        <input type="hidden" name = "photoID" value = {{photo["photoID"]}} required/> </br>
-                        <input type="submit" value = Tag />
-                        {% if error %}
-                            <p class="error"><strong>Error:</strong> {{error}}</p>
-                        {% endif %} -->
+                        <input type="text" name = "tagged" placeholder="filepath" required/> </br>
+                        <input type="hidden" name = "photo" value = {{photo["photoID"]}} required/> </br>
+						<input type="submit" value = Tag />
+                        {% if tagError %}
+                            <p class="error"><strong>Error:</strong> {{tagError}}</p>
+                        {% endif %}
                     </form>
                 {% endif %}
             </div>
@@ -135,6 +127,15 @@
                 <p><span>{{comment.poster}}</span>: {{comment.comment}}</p>
               {% endfor %}
             </div>
+			
+			<div>
+			
+			<h2>People in this post:</h2>
+			{% for user in taggedUsers %}
+				{{user["username"]}}
+			{% endfor %}
+			</div> 
+			
         </div><!-- /row -->
     </div>
 
