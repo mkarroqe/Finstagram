@@ -176,10 +176,12 @@ def unfollow():
 
     try:
         query = "UPDATE Follow SET followStatus=0 WHERE username_followed= %s AND username_follower= %s"
+        clear = "DELETE FROM Follow WHERE username_followed = %s AND username_follower = %s"
 
         with conn.cursor() as cursor:
             if unfollowee != user:
                 cursor.execute(query, (unfollowee, user))
+                cursor.execute(clear, (unfollowee, user))
                 message = "Unfollowed " + unfollowee        
             else:
                 message = "You cannot unfollow yourself"    
