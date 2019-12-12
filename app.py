@@ -253,12 +253,15 @@ def tag(tagged = None, photoID = None):
 	if (tagged == None):
 		tagged = request.form['tagged']
 	
+	print("Got tagged")
+	
 	if (photoID == None):
-		photoID = request.form['photoID']
+		photoID = request.form['photo']
+	
+	print("Got photoID")
 	
 	taggedUsers = tagged.split(",")
 	user = session['username']
-	photoID = request.form["photo"]
 	cursor = conn.cursor()
 	groupCheck = 'SELECT groupName FROM belongTo AS b1 WHERE (b1.member_username = %s OR b1.owner_username = %s) AND groupName IN (SELECT groupName FROM belongTo AS b2 WHERE (b2.member_username = %s OR b2.owner_username = %s))'
 	followCheck = 'SELECT username_followed FROM follow WHERE (username_followed = %s) AND (followStatus = 1) AND (username_follower = %s)'
@@ -276,7 +279,7 @@ def tag(tagged = None, photoID = None):
 		else:
 			error = sanatizedUser + " cannot see your posts!"
 			cursor.close()
-			return redirect(url_for'home')
+			return render_template('home.html', username = user, photos = [], error = error)
 	conn.commit()
 	cursor.close()
 	return redirect(url_for('home'))
@@ -363,6 +366,11 @@ def postPhoto():
 	ins = "INSERT INTO Photo (postingDate, filepath, allFollowers, caption, photoPoster) VALUES( %s, %s, %s, %s, %s)"
 	cursor.execute(ins, (time,filepath, allFollowers, caption, user))
 	conn.commit()
+	
+	getID = "SELECT max(photoID) FROM Photo"
+	cursor.execute(getID,)
+	photoID = cursor.fetchone()
+	photoID = photoID[max(photoID)]
 
 	#sharedWith:
 	if (request.form['groupSelected'] != "-- Select --"):
@@ -370,20 +378,16 @@ def postPhoto():
 		group = str(shareInfo[0].strip())
 		owner = str(shareInfo[1].strip())
 
-		getID = "SELECT max(photoID) FROM Photo"
-		cursor = conn.cursor()
-		cursor.execute(getID,)
-		photoID = cursor.fetchone()
-
 		sharePhoto = "INSERT INTO sharedwith (groupOwner, groupName, photoID) VALUES (%s, %s, %s)"
-		cursor.execute(sharePhoto, (owner, group, photoID[max(photoID)]))
+		cursor.execute(sharePhoto, (owner, group, photoID))
 		conn.commit()
 		cursor.close()
 			
 	#tagged - redirects to tag()
-		if (tagged):
-			tag(tagged)
-		return redirect(url_for('home'))
+	if (tagged):
+		print("\n\n in tagged \n\n")
+		tag(tagged, photoID)
+	return redirect(url_for('home'))
 
 @app.route('/post_comment', methods=['GET', 'POST'])
 @login_required
