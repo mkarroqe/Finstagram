@@ -95,6 +95,9 @@
             <div class="col-lg-4"><!-- filler --></div>
             <div class="col-lg-4">
                 <h4>Comments</h4>
+                {% for comment in comments %}
+                    <p><span>{{comment.poster}}</span>: {{comment.comment}}</p>
+                {% endfor %}
             </div>
             <div class="col-lg-4">
                 <form action="/like" method="POST">
