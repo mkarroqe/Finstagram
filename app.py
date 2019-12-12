@@ -281,7 +281,7 @@ def tag(tagged = None, photoID = None):
 		else:
 			error = sanatizedUser + " cannot see your posts!"
 			cursor.close()
-			return redirect('home')
+			return redirect(url_for('home'))
 	conn.commit()
 	cursor.close()
 	return redirect(url_for('home'))
