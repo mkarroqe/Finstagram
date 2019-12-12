@@ -251,12 +251,19 @@ def like():
 
 @app.route('/tag', methods=['GET', 'POST'])
 @login_required
-def tag(tagged = None):
-	if (tagged == None):
-		tagged = request.form['tagged']
-	taggedUsers = tagged.split(",")
-	user = session['username']
-	photoID = request.form["photo"]
+def tag(tagged = None, photoID = None):
+    if (tagged == None):
+        tagged = request.form['tagged']
+
+    taggedUsers = tagged.split(",")
+    user = session['username']
+
+    if (photoID == None):
+        photoID = request.form["photo"]
+
+    # if(photoID is None):
+    #     photoID = request.form["photo"]
+
 	cursor = conn.cursor()
 	groupCheck = 'SELECT groupName FROM belongTo AS b1 WHERE (b1.member_username = %s OR b1.owner_username = %s) AND groupName IN (SELECT groupName FROM belongTo AS b2 WHERE (b2.member_username = %s OR b2.owner_username = %s))'
 	followCheck = 'SELECT username_followed FROM follow WHERE (username_followed = %s) AND (followStatus = 1) AND (username_follower = %s)'
@@ -368,10 +375,7 @@ def postPhoto():
 		group = str(shareInfo[0].strip())
 		owner = str(shareInfo[1].strip())
 
-		getID = "SELECT max(photoID) FROM Photo"
-		cursor = conn.cursor()
-		cursor.execute(getID,)
-		photoID = cursor.fetchone()
+		photoID = request.form["photoID"]
 
 		sharePhoto = "INSERT INTO sharedwith (groupOwner, groupName, photoID) VALUES (%s, %s, %s)"
 		cursor.execute(sharePhoto, (owner, group, photoID[max(photoID)]))
@@ -380,7 +384,7 @@ def postPhoto():
 			
 	#tagged - redirects to tag()
 		if (tagged):
-			tag(tagged)
+			tag(tagged, photoID)
 		return redirect(url_for('home'))
 
 @app.route('/post_comment', methods=['GET', 'POST'])
