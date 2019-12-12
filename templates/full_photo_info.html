@@ -114,8 +114,9 @@
                         <p class="error"><strong>Error:</strong> {{error}}</p>
                     {% endif %}
                 </form>
-                {% for like in likes %}
+                
                 <div class="rating-block">
+                {% for like in likes %}
                     <h4>{{like["username"]}}'s rating</h4>
                     <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
                     <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
@@ -133,9 +134,9 @@
                     <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
                       <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                     </button>
+                {% endfor %}
                 </div>
             </div><!-- /col-sm-3 -->
-            {% endfor %}
         </div><!-- /row -->
     </div>
 
