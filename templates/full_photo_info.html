@@ -54,36 +54,51 @@
     <div class="jumbotron jumbotron-fluid" id="homepage">
       <div class="container">
         <form action="/post" method="POST">
-            <br/><br/><br/>
-            <h1>Photo by {{photo["photoPoster"]}}</h1>
-            <label>Posted on: {{photo["postingDate"]}} by {{photo["firstName"]}} {{photo["lastName"]}}</label>
+            <div class="row">
+                <div class="col-lg-6">
+                    <br/><br/><br/>
+                    <h1>Photo by {{photo["photoPoster"]}}</h1>
+                    <p>{{photo["caption"]}}</p>
+                </div>
+                <div class="col-lg-6">
+                    <br/><br/><br/><br/>
+                    <label>Posted on: {{photo["postingDate"]}} by {{photo["firstName"]}} {{photo["lastName"]}}</label>
+                    <p>In this photo: 
+                        {% for user in taggedUsers %}
+                            {{user["username"]}}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
         </form>
       </div>
     </div>
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-4">
-                <img style="width: 300px" src = {{photo["filepath"]}}></img>
-            </div>
-
-            <!-- TODO: why is this a filepath to begin with? -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 position-fixed">
+                <img style="height: 300px" src = {{photo["filepath"]}}></img>
+            
                 {% if photo["photoPoster"] == username %}
-                    <h4>Tag someone!</h4>
-                    <label>(Separate by commas)</label>
+                    <br /><br />
                     <form action="/tag" method="POST">
                         <input type="text" name = "tagged" placeholder="filepath" required/> </br>
                         <input type="hidden" name = "photo" value = {{photo["photoID"]}} required/> </br>
-						<input type="submit" value = Tag />
+						<button type="submit" class="btn btn-blue-outline btn-sm my-2 my-sm-0">Tag</button>
                         {% if tagError %}
                             <p class="error"><strong>Error:</strong> {{tagError}}</p>
                         {% endif %}
                     </form>
                 {% endif %}
             </div>
-            
-            <div class="col-sm-4">
+            <div class="col-lg-4"><!-- filler --></div>
+            <div class="col-lg-4">
+                <h4>Comments</h4>
+                {% for comment in comments %}
+                    <p><span>{{comment.poster}}</span>: {{comment.comment}}</p>
+                {% endfor %}
+            </div>
+            <div class="col-lg-4">
                 <form action="/like" method="POST">
                     <input type="hidden" name = "photoID" value = {{photo.photoID}} required/> </br>
                     <select name = "rating">
@@ -98,9 +113,10 @@
                         <p class="error"><strong>Error:</strong> {{error}}</p>
                     {% endif %}
                 </form>
-                {% for like in likes %}
+                
                 <div class="rating-block">
-                    <h4>Your rating</h4>
+                {% for like in likes %}
+                    <h4>{{like["username"]}}'s rating</h4>
                     <h2 class="bold padding-bottom-7">{{like["rating"]}} <small>/ 5</small></h2>
                     <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
                       <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
@@ -117,25 +133,9 @@
                     <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
                       <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                     </button>
+                {% endfor %}
                 </div>
             </div><!-- /col-sm-3 -->
-            {% endfor %}
-
-            <div class = "col-lg-12">
-              <h2>Comments:</h2>
-              {% for comment in comments %}
-                <p><span>{{comment.poster}}</span>: {{comment.comment}}</p>
-              {% endfor %}
-            </div>
-			
-			<div>
-			
-			<h2>People in this post:</h2>
-			{% for user in taggedUsers %}
-				{{user["username"]}}
-			{% endfor %}
-			</div> 
-			
         </div><!-- /row -->
     </div>
 

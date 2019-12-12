@@ -10,7 +10,14 @@ import time
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-conn = pymysql.connect(host='localhost', port = 3306, user='root', password='root', db='finstagram', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+conn = pymysql.connect(host='localhost',
+                       port = 20001,
+                       user='root',
+                       password='root',
+                       db='finstagram',
+                       charset='utf8mb4',
+                       cursorclass=pymysql.cursors.DictCursor)
+
 
 def login_required(f):
 	@wraps(f)
@@ -160,43 +167,71 @@ def follow():
 	cursor.close()
 	return redirect(url_for('home'))
 
-# IN PROGRESS STILL -mary ----------------------
 @app.route('/unfollow', methods=['POST'])
 @login_required
 def unfollow():
-	user = session['username']
-	unfollowee = request.form["username"]
-	print("unfollowee:", unfollowee)
-	
-	try:
-		query = "UPDATE Follow SET followStatus=0 WHERE username_followed= %s AND username_follower= %s"
-		
-		# Query used to remove the follow from the Follow table
-		# deleteQuery = "DELETE FROM Follow WHERE username_follower=%s AND username_followed=%s"
-		
-		with conn.cursor() as cursor:
-			if unfollowee != user:
-				cursor.execute(query, (unfollowee, user))
-				message = "Unfollowed " + unfollowee        
-			else:
-				message = "You cannot unfollow yourself"    
-	except:
-		message = "Unfollowing " + unfollowee + "failed."
-	
-	conn.commit()
-	cursor.close()
-	print(message)
-	return redirect(url_for('home'))
+    user = session['username']
+    unfollowee = request.form["username"]
+    print("unfollowee:", unfollowee)
 
-	# return render_template("followers.html", message=message, username=session["username"])
+    try:
+        query = "UPDATE Follow SET followStatus=0 WHERE username_followed= %s AND username_follower= %s"
 
-	# cursor = conn.cursor()
-	# ins = "INSERT INTO Follow VALUES( %s, %s, %s)"
-	# cursor.execute(ins, (followee,user, 0))
-	# conn.commit()
-	# cursor.close()
-	# return redirect(url_for('home'))
-# ----------------------------------------------
+        with conn.cursor() as cursor:
+            if unfollowee != user:
+                cursor.execute(query, (unfollowee, user))
+                message = "Unfollowed " + unfollowee        
+            else:
+                message = "You cannot unfollow yourself"    
+    except:
+        message = "Unfollowing " + unfollowee + "failed."
+
+    conn.commit()
+    cursor.close()
+    print(message)
+    return redirect(url_for('home'))
+
+@app.route("/searchByPoster", methods=["POST"])
+@login_required
+def searchByPoster():
+    user = session['username']
+    if request.form:
+        requestData = request.form
+        searchedUser = requestData["searchedUser"]
+        with conn.cursor() as cursor:
+            # Query to check if the current user follows the searched user
+            check = "SELECT * FROM Follow WHERE username_followed=%s AND username_follower=%s AND followStatus=1"
+            cursor.execute(check, (searchedUser, user))
+            checkData = cursor.fetchone()
+            print("checkData:", checkData)
+
+            # Query to check if the searched user exists
+            exists = "SELECT * FROM Person WHERE username=%s"
+            cursor.execute(exists, (searchedUser))
+            existData = cursor.fetchone()
+            print("existData:", existData)
+
+            if existData:
+                # if (check2Data):
+                if not checkData:
+                    message = "You cannot view searched user's photos"
+                    return render_template("home.html", message=message, username=session["username"])
+
+                # If the checks are satisfied, then display the searched user's images
+                query1 = "SELECT filepath, photoID, photoPoster, postingDate, caption FROM Photo WHERE photoPoster=%s"
+
+                cursor.execute(query1, (searchedUser))
+                data = cursor.fetchall()
+                print("data:", data)
+
+                return render_template("poster.html", username=session["username"], posts=data)#, taggedUsers=taggedUsers, searchedUser=searchedUser)
+
+            message = "Searched user does not exist. Please try again."
+            return render_template("home.html", message=message, username=session["username"])
+
+    message = "Failed to search for user."
+    # return render_template("poster.html", message=message, username=session["username"])
+    return redirect(url_for('home'))
 
 @app.route('/like', methods=['GET', 'POST'])
 @login_required
